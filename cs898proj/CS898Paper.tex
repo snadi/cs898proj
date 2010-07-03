@@ -1,0 +1,136 @@
+
+\documentclass[conference]{IEEEtran}
+
+\begin{document}
+
+\title{Patient Consent}
+
+\author{\IEEEauthorblockN{Atif Khan, Sarah Nadi}
+\IEEEauthorblockA{David R. Cheriton School of Computer Science\\
+University of Waterloo\\
+Ontario, Canada\\
+{??, snadi}@uwaterloo.ca}
+}
+
+% make the title area
+\maketitle
+
+
+\begin{abstract}
+The abstract goes here.
+\end{abstract}
+
+
+
+\section{Introduction}
+With the advance of Information Communication Technologies (ICT), more and more organizations are utilizing electronic systems to capture, manage and use patient related information.  The scope of this information varies from organization wide Electronic Medical Records (EMRs) to Electronic Health Records (EHRs) shared between different organizations.  Although this improves the effectiveness of information exchange, coordination, and use, it also raises the critical issue of patient consent. Usually, patient information is collected for the primary purpose of providing health care for a specific episode. Any secondary use must be in accordance with patient consent.  It has been argued that a patient should be aware of all the systems collecting their information, and should be able to specify how this information can be used~\cite{kluge2004informed}. Ideally, in an electronic system, the system would automatically grant or deny permission to accessing a patient's record according to their specific consent policy. However, it is often difficult, if not impossible, to predict all future-use scenarios and enforce patient consent in an appropriate manner.
+
+There are many aspects of this problem that need to be solved. First, how can patient consent be captured electronically in an effective way? Second, how can the captured consent policies be represented and processed internally? Finally, how can we define consent policies that protect the patient privacy, but do not compromise their health at the same time? All three problems are very important in this domain. However, in this paper, we focus on the second problem, and briefly touch upon the third.
+
+To address these problems, we propose building a policy based patient consent management system. The system would utilize (previously captured) patient consent information and various operational policies as input. Each policy will be represented by a set of RDF rules in Notation 3 (N3)~\cite{N3not}.  We will use the Euler proof mechanism~\cite{eurlorprf} to compute (a) the result and (b) the proof of the aggregated rules.  
+
+Our goal is to demonstrate that various actions on patient information can be protected in a real-time manner by utilizing the policy based consent management. The advantage of using Euler to generate a proof is that in the future, proofs can be validated between different systems when exchanging EHRs. This offers a major improvement over the current industry practice of patient consent management and secondary use of patient information. This paper describes the preliminary effort in this direction where we illustrate the applicability of our idea through a selection of consent policies and situations.
+
+The contributions of this work are as follows: 
+
+\begin{itemize}
+    \item A set of consent policies represented in N3 notation. These are expressed as N3 rules which allow or deny access to the specified documents.
+
+\item A collection of executable scenarios that show how the consent policies are applied in different situations. A Java application is developed to demonstrate these scenarios.
+
+\item Policy conflict detection (We still need more details about this part)
+\end{itemize}
+
+The rest of this paper is organized as follows. Section~\ref{bg-sec} provides background information about patient consent, N3 notation, and the Euler engine. Section~\ref{rel-work} describes some of the work that has been done to develop an electronic patient consent system. Section~\ref{cons-polic} explains the different consent policies, and which ones will we be including in our prototype. Section~\ref{main-sys} describes the prototype system developed in this work. It describes how the information flow in the system as well as the policy rules and facts used. This section also mentions the current limitations of the system. Section~\ref{discFuture} discusses ??, and outlines possible future additions to the system. Finally, Section~\ref{concl} concludes this paper.
+
+\section{Background}
+\label{bg-sec}
+
+\subsection{Patient Consent}
+\label{pat-consent}
+Background of what patient consent is (accessing records vs consent to an operation for example).
+
+Historically, patient consent was through paper (brief summary of how it went)
+
+
+\subsection{N3 Notation}
+
+Brief summary of N3 notation
+
+\subsection{Euler}
+
+Brief summary of how Euler works and how it provides a proof. Mention things like one query per file, and first match only etc.
+
+
+\section{Related Work}
+\label{rel-work}
+
+Work that addresses patient consent for access of electronic records.
+
+
+\section{Consent Policies}
+\label{cons-polic}
+
+Explain the different consent policies (opt-in, opt-out etc.), and the ones that will be supported in the project.
+
+\section{Our System Name}
+\label{main-sys}
+
+Not sure of this section's title but if we have a name for our system, that would do for the title. 
+
+\subsection{Information Flow}
+\label{info-flow}
+
+Needs a better name. Should contain how the user chooses the person and the document they want to check, how the system uses Euler to check the rules and facts file etc. Should contain snapshots
+
+\subsection{Privacy Policies in N3 Notation}
+\label{rules-sec}
+
+Describes our rules/policy file. 
+
+\subsection{Facts in N3 Notation}
+
+Describes the facts we support (different entities and relationships) in our facts file.
+
+\subsection{Limitations}
+
+Describes the current limitations of our system
+
+\section{Discussion and Future Work}
+\label{discFuture}
+
+can split into two sections if there's a lot of things to discuss
+
+
+\section{Conclusion}
+\label{concl}
+The conclusion goes here.
+
+
+
+
+% conference papers do not normally have an appendix
+
+
+% use section* for acknowledgement
+\section*{Acknowledgment}
+
+
+The authors would like to thank...
+
+
+
+
+
+%\IEEEtriggeratref{8}
+% references section
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+
+
+
+% that's all folks
+\end{document}
+
+
