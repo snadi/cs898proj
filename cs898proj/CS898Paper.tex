@@ -1,7 +1,8 @@
 
 \documentclass[conference]{IEEEtran}
-
+\usepackage{url}
 \begin{document}
+
 
 \title{Patient Consent}
 
@@ -23,13 +24,31 @@ The abstract goes here.
 
 
 \section{Introduction}
-With the advance of Information Communication Technologies (ICT), more and more organizations are utilizing electronic systems to capture, manage and use patient related information.  The scope of this information varies from organization wide Electronic Medical Records (EMRs) to Electronic Health Records (EHRs) shared between different organizations.  Although this improves the effectiveness of information exchange, coordination, and use, it also raises the critical issue of patient consent. Usually, patient information is collected for the primary purpose of providing health care for a specific episode. Any secondary use must be in accordance with patient consent.  It has been argued that a patient should be aware of all the systems collecting their information, and should be able to specify how this information can be used~\cite{kluge2004informed}. Ideally, in an electronic system, the system would automatically grant or deny permission to accessing a patient's record according to their specific consent policy. However, it is often difficult, if not impossible, to predict all future-use scenarios and enforce patient consent in an appropriate manner.
+With the advance of Information Communication Technologies (ICT), more medical organizations are utilizing electronic systems to capture, manage and use patient
+related information.  The scope of this information varies from organization wide Electronic Medical Records (EMRs) to Electronic Health Records (EHRs) shared
+between different organizations.  Although this improves the effectiveness of information exchange, coordination, and use, it also raises the critical issue of
+patient consent. Usually, patient information is collected for the primary purpose of providing health care for a specific episode. Any secondary use must be in
+accordance with patient consent.  It has been argued that a patient should be aware of all the systems collecting their information, and should be able to
+specify how this information can be used~\cite{kluge2004informed}. Ideally, in an electronic system, the system would automatically grant or deny permission to
+accessing a patient's record according to their specific consent policy. However, it is often difficult, if not impossible, to predict all future-use scenarios
+and enforce patient consent in an appropriate manner.
 
-There are many aspects of this problem that need to be solved. First, how can patient consent be captured electronically in an effective way? Second, how can the captured consent policies be represented and processed internally? Finally, how can we define consent policies that protect the patient privacy, but do not compromise their health at the same time? All three problems are very important in this domain. However, in this paper, we focus on the second problem, and briefly touch upon the third.
+There are many aspects of this problem that need to be solved. First, how can patient consent be captured electronically in an effective way? Second, how can
+the captured consent policies be represented and processed internally? Finally, how can we define consent policies that protect the patient privacy, but do not
+compromise their health at the same time? All three problems are very important in this domain. However, in this paper, we focus on the second problem, and
+briefly touch upon the third.
 
-To address these problems, we propose building a policy based patient consent management system. The system would utilize (previously captured) patient consent information and various operational policies as input. Each policy will be represented by a set of RDF rules in Notation 3 (N3)~\cite{N3not}.  We will use the Euler proof mechanism~\cite{eurlorprf} to compute (a) the result and (b) the proof of the aggregated rules.  
 
-Our goal is to demonstrate that various actions on patient information can be protected in a real-time manner by utilizing the policy based consent management. The advantage of using Euler to generate a proof is that in the future, proofs can be validated between different systems when exchanging EHRs. This offers a major improvement over the current industry practice of patient consent management and secondary use of patient information. This paper describes the preliminary effort in this direction where we illustrate the applicability of our idea through a selection of consent policies and situations.
+To address these problems, we propose building a policy based patient consent management system. The system would utilize (previously captured) patient consent
+information and various operational policies as input. Each policy will be represented by a set of RDF rules in Notation 3 (N3)~\cite{N3not}.  We will use the
+Euler proof mechanism~\cite{eurlorprf} to compute (a) the result and (b) the proof of the aggregated rules.  
+
+
+Our goal is to demonstrate that various actions on patient information can be protected in a real-time manner by utilizing the policy based consent management.
+The advantage of using Euler to generate a proof is that in the future, proofs can be validated between different systems when exchanging EHRs. This offers a
+major improvement over the current industry practice of patient consent management and secondary use of patient information. This paper describes the
+preliminary effort in this direction where we illustrate the applicability of our idea through a selection of consent policies and situations.
+
 
 The contributions of this work are as follows: 
 
@@ -71,7 +90,40 @@ Work that addresses patient consent for access of electronic records.
 \section{Consent Policies}
 \label{cons-polic}
 
-Explain the different consent policies (opt-in, opt-out etc.), and the ones that will be supported in the project.
+There are different forms of consent that a patient may choose from. Coiera and Clarke~\cite{coiera2004consent} define four general forms of patient consent as
+follows:
+
+\begin{itemize}
+ \item \textit{General consent}: This is also generally known as ``opt-in'' which means that the patient agrees that any health care professional may access
+all of their health data for the purpose of providing care to them.
+\item \textit{General consent with specific denial(s)}: This means that the patient specifically defines certain exceptions to their general consent policy.
+These exceptions may be related to particular data or to particular people.
+\item \textit{General denial with specific consent(s)}: In this case, the patient generally denies access to their data except in specific circumstances. These
+may include disclosure for specific purposes or to specific people or the disclosure of certain types of information.
+\item \textit{General denial}: This is the strictest level of consent a patient may have. In this case, the patient denies the use of their information for any
+future event irrelevant of the circumstances that may occur. This consent policy is also generally known as ``opt-out''.
+\end{itemize}
+
+Pruski~\cite{pruski2010} use these four forms of consent while designing their rule-based language for describing patient consent policies. Additionally,
+Pruski outlines the key requirements that must be taken into consideration while dealing with patient consent. These are expressing who can access the data,
+the kind and the sensitivity of the data, the period for which a consent policy is valid, the purpose of why the data is being accessed, and what kind of
+consent is given to the user requesting the data. 
+
+In our work, we consider both the four forms of patient consent as well as some of the requirements proposed by Pruski. In our current prototype, we support
+five types of patient consent policies as follows:
+
+\begin{itemize}
+ \item \textit{opt-in}: As described above, a patient who has an opt-in policy allows any treating doctor to access their information. In our system, we also
+add other conditions that need to be met such as that the health care professional should be a member of the admitting organization etc. These details will be
+discussed in Section~\ref{main-sys}.
+\item \textit{opt-in except for sensitive documents}: In this case, the patient allows access to all their information except for documents that are classified
+as sensitive. For example, these may include HIV tests or Sexually Transmitted Diseases. 
+\item \textit{opt-in except for certain people}: In this case, the patient allows access to all their information, but specifically denies certain individuals
+from accessing their data.
+\item \textit{opt-out}: A patient with an opt-out policy explicitly denies access to all their information regardless of who is trying to access the data or
+why they are trying to access it.
+\item \textit{opt-out with emergency override}: In this case, the patient agrees to grant access to their information only if it is an emergency situation. 
+\end{itemize}
 
 \section{Our System Name}
 \label{main-sys}
