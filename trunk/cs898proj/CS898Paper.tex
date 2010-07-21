@@ -2,6 +2,7 @@
 \documentclass[conference]{IEEEtran}
 \usepackage{url}
 \usepackage{graphicx}
+\usepackage{array}
 
 \begin{document}
 
@@ -144,22 +145,207 @@ with the proof of why access has been denied.
 
 PUT SNAPSHOTS HERE
 
-\subsection{Access Policies in N3 Notation}
-\label{rules-sec}
-
-Describes our rules/policy file. 
-
 \subsection{Facts in N3 Notation}
+
+To test our access policies, we chose a set of facts that can reflect all the situations we wish to test.Figure~\ref{fig:allfacts} shows all the facts we use to
+test our rules. There are four different types of actors: doctors, nurses, hospitals and patients. All hospitals have a ``members only'' policy where only
+members of the hospital are authorized to access patient information. Some hospitals enforce a ``on shift'' only policy where only members that are currently on
+shift may be able to access any patient information. Doctors and nurses can be members of more than one hospital, but can only be on shift in one hospital at a
+time. A patient is treated in a hospital, and own documents that reflect their medical information. Some documents are classified as sensitive. Currently, we
+only classify documents as sensitive or non sensitive (the default). In the future, we may wish to add different types of classifications such that a patient
+may have more flexibility in specifying which category of documents do they grant access to. Additionally, a patient may be in an emergency situation. The
+default is that the patient is in a regular episode of care. As indicated in Section~\ref{cons-polic}, we currently support five different types of patient
+consent policies. These are coded as optin, optinsens, optinexcep, and optout respectively. We assigned the different policies to the patients such that all of
+our designed access policies can be successfully tested. 
+Appendix~\ref{sec:facts-file} shows the n3 facts file we use to represent the facts shown in Figure~\ref{fig:allfacts}.
 
 \begin{figure*}[t]
 \centering
 \includegraphics[width=16cm,height=14cm]{BigPicture.png}
-\caption{test}
+\caption{Tested Facts}
 \label{fig:allfacts}
 \end{figure*}
 
+\subsection{Access Policies in N3 Notation}
+\label{rules-sec}
 
-Describes the facts we support (different entities and relationships) in our facts file.
+In our current prototype, we have designed the basic set of rules that can later be expanded for more sophisticated rule nesting. The complete rule file can be
+found in the Appendix~\ref{sec:rules-file}. There are six possible conclusions in our rule set. The two main conclusions are allowing or denying
+access. However, we need the other rules to reach these conclusions. The following is the list of these four conclusions:
+
+\begin{itemize}
+ \item \textbf{\textit{possibleaccess}}: A person $a$ has possible access to patient $p$ if they are a member of the organization $p$ is treated in.
+Additionally, if this organization has a by shift policy, then $a$ must be on shift to have possible access.
+\item \textbf{\textit{authenticated}}: A person $a$ is authenticated to access a patient $p$'s information if they have possible access to $p$, and they are
+treating $p$. The reason possible access is separated from authentication is that in emergency situations, a non treating doctor might need to access this
+patient's information. In that case, they still need to satisfy the possible access rule.
+\item \textbf{\textit{access}}: A person $a$ is granted access to a document $d$ if one of the following cases is true:
+\begin{itemize}
+ \item $a$ is authenticated to access $p$'s information, $d$ belongs to $p$, and $p$ has an opt in policy.
+\item $a$ has possible access to $p$'s information, $d$ belongs to $p$, $p$ has an opt out policy with emergency override, and $p$ is in an emergency situation.
+\item $a$ is authenticated to access $p$'s information, $d$ belongs to $p$, $p$ has an opt in policy with exceptions, and $a$ is not one of those exceptions.
+\item $a$ is authenticated to access $p$'s information, $d$ belongs to $p$, $p$ has an opt in policy except for sensitive data, and $d$ is not classified as
+sensitive.
+\end{itemize}
+\item \textbf{\textit{cannotaccess}}: This is the converse of the ``possibleaccess'' rule. A person $a$ does not have possible access $p$'s information if $p$
+is treated in $o$, but $a$ is not a member of $o$. Similarly, if they are a member, but are not on shift in an organization that has a by shift policy, then $a$
+does not have possible access $p$ as well.
+\item \textbf{\textit{notauthenticated}}: This is the opposite of the ``authenticated'' rule. A person $a$ is authenticated to access $p$'s information, but $a$
+does not treat $p$, then $a$ is not authenticated to access $p$'s information. If $a$ cannot access $p$'s information in the first place according to the
+previous rule, then $a$ is automatically not authenticated to access $p$'s information.
+\item \textbf{\textit{deny}}: A person $a$ is denied access to a document $d$ in one of the following situations:
+\begin{itemize}
+ \item $a$ is authenticated to access $p$'s information, $d$ belongs to $p$, $p$ has an opt out policy.
+\item $d$ belongs to $p$, but $a$ is not authenticated to access $p$'s information.
+\item $a$ has possible access to $p$, $d$ belongs to $p$, $p$ has an opt out policy with emergency override, and the situation is not an emergency.
+\item $a$ is authenticated to access $p$'s information, $d$ belongs to $p$, $p$ has an opt in policy except for sensitive information, and $d$ is classified as
+sensitive.
+\item $a$ is authenticated to access $p$'s information, $d$ belongs to $p$, $p$ has an opt in policy with specific denials, and $p$ has explicitly denied $a$
+access.
+\end{itemize}
+
+\end{itemize}
+
+
+\subsection{Tested Scenarios}
+
+Given the above facts, we designed twelve different scenarios to test our different access policies. Table~\ref{tab:scenarios} summarizes these scenarios and
+an their expected results. In this table, we use plain English to describe the query and facts instead of n3 notation for better illustration. These facts are
+based on Figure~\ref{fig:allfacts}. We write the queries in the form of ``some person $\rightarrow$ some document'' which means that this person is trying to
+access this document, and we are trying to determine whether we should grant them access or not.
+
+\begin{table*}[!t]
+\centering
+\scalebox{0.8}{
+ \begin{tabular}{m{3cm}|m{9cm}|m{5cm}}
+\textbf{Query}&\textbf{Associated Facts}&\textbf{Expected Results}\\
+\hline\hline
+Dr Smith $\rightarrow$ XRay1 & \begin{itemize}
+                             \item Dr Smith is a member of Grand River 
+\item Grand River has a by shift policy 
+\item Dr Smith is on shift in Grand River
+\item XRay1 belongs to John
+\item John is treated in Grand River 
+\item Dr Smith treats John 
+\item John has an opt in policy 
+                            \end{itemize} & Dr Smith is granted access\\
+\hline
+Dr Smith $\rightarrow$ BloodTest & \begin{itemize}
+                          \item Dr Smith is a member of St Mary's 
+\item St Mary's has a by shift policy
+\item BloodTest belongs to Tim
+\item Tim is treated in St Mary's
+\item Dr Smith treats Tim
+\item Tim has an opt in policy
+                         \end{itemize} & Dr Smith is denied access because St Mary's has a by shift policy and he is not currently on shift\\
+\hline
+Dr Smith $\rightarrow$ CTScan3 & \begin{itemize}
+                        \item Dr Smith is a member of St Catherine's
+\item St Catherine's has a members only policy
+\item CTSCan3 belongs to Sally
+\item Dr Smith treats Sally
+\item Sally has an opt in policy
+                       \end{itemize} & Dr Smith is granted access even though he is not on shift because St Catherin's does not have a by shift only policy\\
+\hline
+Dr Jane $\rightarrow$ BloodTest & \begin{itemize}
+                           \item Dr Jane is a member of St Mary's
+\item St Mary's has a members only policy
+\item Dr Jane is on shift at St Mary's
+\item BloodTest belongs to Tim
+\item TIm is treated in St Mary's
+\item Dr Smith treats Tim
+\item Tim has an opt in policy
+                          \end{itemize} & Dr Jane is denied access because she is not treating Tim\\
+\hline
+Dr Smith $\rightarrow$ CTScan1 & \begin{itemize}
+                                  \item Dr Smith is a member of Grand River
+\item Grand River has a by shift policy
+\item Dr Smith is on shift in Grand River
+\item CTScan1 belongs to Peter
+\item Peter is treated in Grand River
+\item Dr Smith treats Peter
+\item Peter has an opt out policy
+                                 \end{itemize} & Dr Smith is denied access because Peter has an opt out policy\\
+\hline
+Dr Jane $\rightarrow$ XRay2 & \begin{itemize}
+                               \item Dr Jane is a member of St Mary's
+\item St Mary's has a by shift policy
+\item Dr Jane is on shift in St Mary's
+\item XRay2 belongs to Wendy
+\item Wendy is treated in St Mary's
+\item Dr Jane treats Wendy
+\item Wendy has an opt out with emergency override policy
+\item Wendy is in an emergency situation
+                              \end{itemize} & Dr Jane is granted access since Wendy is in an emergency\\
+\hline
+NurseAlex $\rightarrow$ XRay2 & \begin{itemize}
+                               \item Nurse Alex is a member of St Mary's
+\item St Mary's has a by shift policy
+\item Nurse Alex is on shift in St Mary's
+\item XRay2 belongs to Wendy
+\item Wendy is treated in St Mary's
+\item Wendy has an opt out policy with emergency override
+\item Wendy is in an emergency situation
+\end{itemize} & Nurse Alex is granted access even though she is not treating Wendy because Wendy is in an emergency\\
+\hline
+Dr Jane $\rightarrow$ XRay3 & \begin{itemize}
+                               \item Dr Jane is a member of St Mary's
+\item St Mary's has a by shift policy
+\item Dr Jane is on shift in St Mary's
+\item XRay3 belongs to Jenna
+\item Dr Jane treats Jenna
+\item Jenna has an opt out policy with emergency override \end{itemize} & Dr Jane is denied access because Jenna has an opt out policy with emergency override,
+and Jenna is not in an emergency\\
+\hline
+Dr Smith $\rightarrow$ CTScan2 & \begin{itemize}
+                                  \item Dr Smith is a member of Grand River
+\item Grand River has a by shift policy
+\item Dr Smith is on shift at Grand River
+\item CTScan2 belongs to Tom
+\item Tom is treated in Grand River
+\item Dr Smith treats Tom
+\item Tom has an opt in policy with the exception of sensitive documents
+                                 \end{itemize} & Dr Smith is granted access because CTScan2 is not classified as sensitive\\
+\hline
+Dr Smith $\rightarrow$ HIVRep1 & \begin{itemize}
+                                  \item Dr Smith is a member of Grand River
+\item Grand River has a by shift policy
+\item Dr Smith is on shift at Grand River
+\item HIVRep1 belongs to Tom
+\item Tom is treated in Grand River
+\item Dr Smith treats Tom
+\item Tom has an opt in policy with the exception of sensitive documents
+\item HIVRep1 is classified as sensitive
+                                 \end{itemize} & Dr Smith is denied access because Tom has denied access to sensitive documents, and HIVRep1 is classified as
+sensitive\\
+\hline
+Dr Smith $\rightarrow$ STD1 & \begin{itemize}
+                               \item Dr Smith is a member of Grand River
+\item Grand River has a by shift policy
+\item Dr Smith is on shift at Grand River
+\item STD1 belongs to John
+\item John is treated in Grand River
+\item Dr Smith treats John
+\item John has an opt in policy
+\item STD1 is classified as sensitive
+                              \end{itemize} & Dr Smith is granted access even though STD1 is sensitive because John has a full opt in policy\\
+
+\hline
+Dr Smith $\rightarrow$ MRI1 & \begin{itemize}
+                               \item Dr Smith is a member of St Catherine's
+\item St Catherine's has a members only policy
+\item MRI1 belongs to Jack
+\item Jack is treated in St Catherine's
+\item Jack has an opt in policy with specific denials to certain people
+\item Jack has denied access to Dr Smith
+                              \end{itemize} & Dr Smith is denied access since Jack has explicitly denied him in his policy\\                           
+\end{tabular}
+}
+\caption{Summary of the tested scenarios}
+\label{tab:scenarios}
+\end{table*}
+
+
 
 \subsection{Limitations}
 
@@ -197,7 +383,17 @@ The authors would like to thank Dr. Helen Chen for ...
 \bibliography{references}
 
 
+\appendices
 
+\section{Facts File}
+\label{sec:facts-file}
+
+FACTS FILE WILL GO HERE
+
+\section{Rules File}
+\label{sec:rules-file}
+
+RULES FILE WILL GO HERE
 
 % that's all folks
 \end{document}
