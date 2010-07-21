@@ -1,6 +1,8 @@
 
 \documentclass[conference]{IEEEtran}
 \usepackage{url}
+\usepackage{graphicx}
+
 \begin{document}
 
 
@@ -133,14 +135,29 @@ Not sure of this section's title but if we have a name for our system, that woul
 \subsection{Information Flow}
 \label{info-flow}
 
-Needs a better name. Should contain how the user chooses the person and the document they want to check, how the system uses Euler to check the rules and facts file etc. Should contain snapshots
+Currently, our system assumes that all the information needed is already captured. That is, all information about the patient, their documents as well as their
+privacy policies. Similarly, we also assume that all the information about the different hospitals, doctors, and nurses is already present. In this sense, we
+focus on answering the question of whether a doctor or nurse can access a certain document. This is done by loading the facts available and our rule set into
+Euler, and then querying it to see if a certain doctor or nurse can access a certain document. If access is granted, then we present the user with the proof
+provided by Euler. If no proof is found, we check if we can find an explicit deny rule for the same actors in the original query. If so, we present the user
+with the proof of why access has been denied.
 
-\subsection{Privacy Policies in N3 Notation}
+PUT SNAPSHOTS HERE
+
+\subsection{Access Policies in N3 Notation}
 \label{rules-sec}
 
 Describes our rules/policy file. 
 
 \subsection{Facts in N3 Notation}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=16cm,height=14cm]{BigPicture.png}
+\caption{test}
+\label{fig:allfacts}
+\end{figure*}
+
 
 Describes the facts we support (different entities and relationships) in our facts file.
 
