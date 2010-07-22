@@ -30,9 +30,10 @@ The abstract goes here.
 With the advance of Information Communication Technologies (ICT), more medical organizations are utilizing electronic systems to capture, manage and use patient
 related information.  The scope of this information varies from organization wide Electronic Medical Records (EMRs) to Electronic Health Records (EHRs) shared
 between different organizations.  Although this improves the effectiveness of information exchange, coordination, and use, it also raises the critical issue of
-patient consent. Usually, patient information is collected for the primary purpose of providing health care for a specific episode. Any secondary use must be in
+patient privacy. Usually, patient information is collected for the primary purpose of providing health care for a specific episode. Any secondary use must be in
 accordance with patient consent.  It has been argued that a patient should be aware of all the systems collecting their information, and should be able to
-specify how this information can be used~\cite{kluge2004informed}. Ideally, in an electronic system, the system would automatically grant or deny permission to
+specify how this information can be used~\cite{kluge2004informed}. Accordingly, each patient should choose a consent policy that reflects how they would like
+their medical information to be used. Ideally, in an electronic system, the system would automatically grant or deny permission to
 accessing a patient's record according to their specific consent policy. However, it is often difficult, if not impossible, to predict all future-use scenarios
 and enforce patient consent in an appropriate manner.
 
@@ -50,7 +51,7 @@ Euler proof mechanism~\cite{eurlorprf} to compute (a) the result and (b) the pro
 Our goal is to demonstrate that various actions on patient information can be protected in a real-time manner by utilizing the policy based consent management.
 The advantage of using Euler to generate a proof is that in the future, proofs can be validated between different systems when exchanging EHRs. This offers a
 major improvement over the current industry practice of patient consent management and secondary use of patient information. This paper describes the
-preliminary effort in this direction where we illustrate the applicability of our idea through a selection of consent policies and situations.
+preliminary effort in this direction where we apply our idea to a selection of consent policies and situations.
 
 
 The contributions of this work are as follows: 
@@ -58,26 +59,100 @@ The contributions of this work are as follows:
 \begin{itemize}
     \item A set of consent policies represented in N3 notation. These are expressed as N3 rules which allow or deny access to the specified documents.
 
-\item A collection of executable scenarios that show how the consent policies are applied in different situations. A Java application is developed to demonstrate these scenarios.
-
-\item Policy conflict detection (We still need more details about this part)
+\item A collection of executable scenarios that show how the consent policies are applied in different situations. A Java application is developed to
+demonstrate these scenarios.
 \end{itemize}
 
-The rest of this paper is organized as follows. Section~\ref{bg-sec} provides background information about patient consent, N3 notation, and the Euler engine. Section~\ref{rel-work} describes some of the work that has been done to develop an electronic patient consent system. Section~\ref{cons-polic} explains the different consent policies, and which ones will we be including in our prototype. Section~\ref{main-sys} describes the prototype system developed in this work. It describes how the information flow in the system as well as the policy rules and facts used. This section also mentions the current limitations of the system. Section~\ref{discFuture} discusses ??, and outlines possible future additions to the system. Finally, Section~\ref{concl} concludes this paper.
+The rest of this paper is organized as follows. Section~\ref{bg-sec} provides background information about patient consent, N3 notation, and the Euler engine.
+Section~\ref{rel-work} describes some of the related work that has been done to develop an electronic patient consent system. Section~\ref{cons-polic} explains
+the different consent policies, and which ones are included in our prototype. Section~\ref{main-sys} describes the prototype system developed in this
+work. It describes how the information flow in the system as well as the policy rules and facts used. This section also mentions the current limitations of the
+system. Section~\ref{discFuture} outlines possible future additions to the system. Finally, Section~\ref{concl} concludes this paper.
+
 
 \section{Background}
 \label{bg-sec}
 
 \subsection{Patient Consent}
 \label{pat-consent}
-Background of what patient consent is (accessing records vs consent to an operation for example).
 
-Historically, patient consent was through paper (brief summary of how it went)
+\subsubsection*{The Consent Challenge}
+Effective patient management involves collaboration between multiple parties, each making its contribution to the overall health care provided to the patient. 
+An effective health care framework will not only support multiple (diverse) participants, but it will also ensure proper information exchange between these
+participants to ensure the highest level of service (care).  Although the prevalent exchange of patient information drastically improves the care provided, it
+does raise a major challenge of information management.  More specifically patients would like to maintain control over the various attributes of their private
+and confidential personal information.  The attributes being access, collaboration, and revocation.  We refer to this as the “Consent Challenge” in the medical
+arena.  It is important to note that the consent challenges are applicable to all patient information in all types of formats.  
 
+Provided that the modern health information systems deal with patient data in electronic format, the consent challenge mutates into an electronic consent
+challenge.  Patient consent has to be integrated at an application native level, in order for it to be useful. OKeefe et al.~\cite{okeefe2002implementation}
+coin the term of eConsent and list the following as key attributes of an electronic patient consent management system:
+
+\begin{itemize}
+ \item There is no single “right” solution to the eConsent challenge, as an eConsent system needs to be tailored for the needs of different environments. For
+example,
+\item the degree to which eConsent plays the role of a gatekeeper, active audit or passive record should be customizable. 
+\item The introduction of an eConsent system will formalize and potentially affect existing trust relationships between consumers and providers. 
+\item A simple yet flexible model for eConsent, supported by education and training, is key to the acceptance and adoption of eConsent. 
+\item A good set of default policies is key to ensuring that eConsent has a minimal impact on clinical workflow. For example, default policies for GP Clinics,
+Mental Health Clinics, Sexual Health Clinics and Hospitals could be established. 
+\item The manner in which eConsent is integrated with existing systems can significantly affect its effectiveness. 
+\end{itemize}
+
+\subsubsection*{The Semantic Challenge}
+Although the above mentioned features promise a solid foundation, they lack some of the practical considerations that might arise from a multi-vendor,
+multi-party health care information management infrastructure such as ours in Canada.  When different parties and their corresponding health information systems
+are required to collaborate, the information exchange mechanism may not be optimal and may require a lowest common denominator approach to information exchange.
+ The major hurdle is not in the syntactic rather in the semantic interoperability of information exchange.  This impedance mismatch (between different vendor
+systems) poses one of the major challenges to universal patient consent management. To apply the governing rules of patient consent, one must have a sound
+semantic understanding of the consent as well as the data.  We term this as the “Semantic Challenge”.  
+
+The semantic web technologies offer some primitive building blocks upon which a foundation for semantic consent management system could be laid on.  The
+traditional information exchange protocols utilize a static predefined schema in order to define the data structure of the shared information. All exchanged
+information is then governed (described) using the static schema.  The semantic web offers a different approach to solve the information exchange problem
+between two dissimilar parties.  Each dataset is accompanied by a corresponding vocabulary.  Each vocabulary is described in a predefined and well understood
+format, therefore making it possible to describe data in ways that make its semantics explicit and hence discoverable automatically in software .
+
+“RDF is a standard model for data interchange on the Web. RDF has features that facilitate data merging even if the underlying schemas differ, and it
+specifically supports the evolution of schemas over time without requiring all the data consumers to be changed~\cite{rdfsite}”.  These properties of RDF make
+it an ideal candidate for information management and exchange for medical information, where the datasets (i) have a particular large set of consumers (ii)
+enjoy a long life span and (iii) are constantly evolving.
 
 \subsection{N3 Notation}
 
-Brief summary of N3 notation
+N3 is based on RDF standards and represents an analogous syntax to RDF/XML to represent data.  Furthermore, N3 adds extra features like rules and formulae in
+order to process data and make inferences from facts in the data.  N3 is designed as an alternative to RDF's XML syntax with emphasis on (a) designed for a
+human -readability and (b) scribblable language – easy to work with (less verbose compared to RDF/XML)~\cite{notation3}.  In N3 information is represented as a
+set of statements, where each statement is composed of a subject, verb and an object. Each statement ends with a period.
+For example an N3 statement \textbf{{:thermo :temp :high}}. would translate into thermostat temperature is high, or \textbf{{:heating :power “0”}}. would
+translate into heating power is zero.  An N3 rule can be described by combining multiple N3 statements as such:
+
+\textbf{{:thermo :temp :high}. $=>$ {:heating :power “0”}.}\newline
+\textbf{If the thermostat temperature is high, then the heating power is zero}
+
+As stated before, an N3 formula adds a considerable amount of deduction and inference capabilities to a simple dataset.  “By having rules and data in the same
+languages, N3Logic provides simplicity in syntax and completeness as rules can operate on themselves and anything written in N3 can be queried in N3
+”~\cite{berners-lee2008}. A reasoning engine is required in order to make use of the N3 rules.  There are various RDF/N3 reasoners available.
+Table~\ref{tab:n3tools} highlights some of the most popular ones.
+
+\begin{table*}
+\centering
+ \begin{tabular}{m{1cm}|m{9cm}}
+\textbf{Tool} & \textbf{Description}\\
+\hline\hline
+cwm & Developed by the Tim Berners-Lee~\cite{berners-lee2008}, cwm is a forward chain reasoner written in python for N3 and N3Logic.  It can be used for
+querying, checking, transforming and filtering information.  Furthermore, cwm is able to reason using a first order logic but without classical negation.\\
+\hline
+Euler & Euler is an inference engine that supports logic based proofs .  It differs from cwm as it is a backward-chaining reasoner enhanced with Euler path
+detection mechanism~\cite{naudts2003inference}.\\
+\hline
+Pychinko & ychinko is an efficient Python implementation of the classic Rete pattern matching algorithm.  It utilizes an optimized implementation of the
+algorithm to handle facts, expressed as triples, and process them using a set of N3 rules (SOURCE?).\\
+ \end{tabular}
+\label{tab:n3tools}
+\caption{RDF/N3 Reasoning Tools}
+\end{table*}
+
 
 \subsection{Euler}
 
@@ -87,7 +162,20 @@ Brief summary of how Euler works and how it provides a proof. Mention things lik
 \section{Related Work}
 \label{rel-work}
 
-Work that addresses patient consent for access of electronic records.
+There are numerous studies dealing with electronic consent. However, these studies ignore the semantic aspect of information and focus
+mainly on security aspects~\cite{reid2003, chen2009identity, blobel2004authorisation}. O'Keefe et al.~\cite{okeefe2002implementation} undertake a feasibility
+study of electronic consent management system in medical arena. The expose various challenges faced by different consumer groups of electronic consent
+management systems.  The study provides a sound set of recommendations for a generic implementation of a patient consent management system.
+Song et al.~\cite{song2002patient} introduce the notion of an e-consent object, encompassing all relevant information concerning the patient consent in the
+e-consent object. Lack of semantics is the biggest draw back of this model.  The rules of consent are not expressed in any formal language and therefore are
+ambigious at interpretation time.
+Win et al.~\cite{win2002implementing} describe an interface based approach through which patient consent can be expressed.  The solution lacks organic growth as
+it hard codes the information and lacks the required flexibility for the user.
+Pruski et al.~\cite{pruski2010} propose e-CRL language designed with the following two goals in mind (a) facilitate capturing of patient consent information (b)
+formalize the expression of patient consent information.  “The language has a well defined BNF based syntax and semantics defined based on first-order logic and
+set theory which allow eHealth systems to fully control the access to critical health data.”.  Although the e-CRL language provides support for semantics,
+it lacks some important features such as proof generation.  Furthermore, the defined language does not integrate with the RDF based solutions and approaches
+making integration difficult.
 
 
 \section{Consent Policies}
@@ -140,15 +228,16 @@ Currently, our system assumes that all the information needed is already capture
 privacy policies. Similarly, we also assume that all the information about the different hospitals, doctors, and nurses is already present. In this sense, we
 focus on answering the question of whether a doctor or nurse can access a certain document. This is done by loading the facts available and our rule set into
 Euler, and then querying it to see if a certain doctor or nurse can access a certain document. If access is granted, then we present the user with the proof
-provided by Euler. If no proof is found, we check if we can find an explicit deny rule for the same actors in the original query. If so, we present the user
+provided by Euler. If no proof is found, we check if we can find an explicit deny rule for the same actor and document in the original query. If so, we present
+the user
 with the proof of why access has been denied.
 
 PUT SNAPSHOTS HERE
 
 \subsection{Facts in N3 Notation}
 
-To test our access policies, we chose a set of facts that can reflect all the situations we wish to test.Figure~\ref{fig:allfacts} shows all the facts we use to
-test our rules. There are four different types of actors: doctors, nurses, hospitals and patients. All hospitals have a ``members only'' policy where only
+To test our access policies, we chose a set of facts that can reflect all the situations we wish to test. Figure~\ref{fig:allfacts} shows all the facts we use
+to test our rules. There are four different types of actors: doctors, nurses, hospitals and patients. All hospitals have a ``members only'' policy where only
 members of the hospital are authorized to access patient information. Some hospitals enforce a ``on shift'' only policy where only members that are currently on
 shift may be able to access any patient information. Doctors and nurses can be members of more than one hospital, but can only be on shift in one hospital at a
 time. A patient is treated in a hospital, and own documents that reflect their medical information. Some documents are classified as sensitive. Currently, we
@@ -170,7 +259,7 @@ Appendix~\ref{sec:facts-file} shows the n3 facts file we use to represent the fa
 \label{rules-sec}
 
 In our current prototype, we have designed the basic set of rules that can later be expanded for more sophisticated rule nesting. The complete rule file can be
-found in the Appendix~\ref{sec:rules-file}. There are six possible conclusions in our rule set. The two main conclusions are allowing or denying
+found in Appendix~\ref{sec:rules-file}. There are six possible rule conclusions in our rule set. The two main conclusions are allowing or denying
 access. However, we need the other rules to reach these conclusions. The following is the list of these four conclusions:
 
 \begin{itemize}
@@ -371,7 +460,7 @@ The conclusion goes here.
 \section*{Acknowledgment}
 
 
-The authors would like to thank Dr. Helen Chen for ...
+The authors would like to thank Dr. Helen Chen for suggesting this problem to us, and guiding us  
 
 
 
