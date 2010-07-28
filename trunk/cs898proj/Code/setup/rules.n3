@@ -1,0 +1,67 @@
+# this rule checks if a is authenticated for access
+# a must be a member of the same organization that p is treated 
+# in. Depending on the organization policy, member may have to be on shift
+
+{?a :memberof ?o. ?o :haspolicy :byshift. ?a :onshift ?o. ?p :treatedin ?o.} => {?a :possibleaccess ?p}.
+
+{?a :memberof ?o. ?o :haspolicy :members. ?p :treatedin ?o.} => {?a :possibleaccess ?p}.
+
+{?a :possibleaccess ?p. ?a :treats ?p.} => {?a :authenticated ?p}.
+
+# If a has possible access to d, and p has a full optin policy #then a can access d (According to # role, divide into access #levels?)
+
+{?a :authenticated ?p. ?d :belongsto ?p. ?p :haspolicy :optin. } => {?a :access ?d}.
+
+# If a has possible access to d, and p has a an optout policy with emergency override and situation s is an emergency #situation, then a can access d even if the dr is not the treating doctor
+
+{?a :possibleaccess ?p. ?d :belongsto ?p. ?p :haspolicy :optoutemer. ?p :hassituation :emergency} => {?a :access ?d}.
+
+
+#If p has an optin policy with exceptions, d belongs to p, and #a is not one of those exceptions, then a is granted access to #d
+{?a :authenticated ?p. ?d :belongsto ?p. ?p :haspolicy :optinexcep. <facts.n3> log:notIncludes {?p :denyaccess ?a}} => {?a :access ?d}.
+
+
+#if the document is not sensitive, then allow access
+{?a :authenticated ?p. ?d :belongsto ?p. ?p :haspolicy :optinsens. <facts.n3> log:notIncludes {?d :hasnature :sensitive}} => {?a :access ?d}.
+
+#DENIAL RULES
+
+#no possible access if a is not a member of the same organization p is treated in
+{?p :treatedin ?o. <facts.n3> log:notIncludes {?a :memberof ?o}} => {?a :cannotaccess ?p}.
+
+#no possible access if a is not on shift in an organization that has a by shift policy
+{?p :treatedin ?o. ?a :memberof ?o. ?o :haspolicy :byshift. <facts.n3> log:notIncludes {?a :onshift ?o}} => {?a :cannotaccess ?p}.
+
+#not authenticated if a has possible access but does not treat p
+{?a :possibleaccess ?p. <facts.n3> log:notIncludes {?a :treats ?p}} => {?a :notauthenticated ?p}.
+
+# If a has possible access to d, and p has a an optout policy with emergency override and situation s is NOT an emergency #situation, then a is denied access.
+
+{?a :possibleaccess ?p. ?d :belongsto ?p. ?p :haspolicy :optoutemer. <facts.n3> log:notIncludes{?p :hassituation :emergency}} => {?a :deny ?d}.
+
+#If p has an opt in policy with exceptions and explicitly denies a doctor then access to this document is denied
+{?a :authenticated ?p. ?d :belongsto ?p. ?p :haspolicy :optinexcep. ?p :denyaccess ?a} => {?a :deny ?d}.
+
+# If a is authenticated, and p has a full optout policy, and #document d belongs to patient p then a is denied access to d  
+
+{?a :authenticated ?p. ?d :belongsto ?p. ?p :haspolicy :optout.} => {?a :deny ?d}.
+
+
+#not authenticated if a cannot access p (even though a treats p (maybe not on shift))
+{?a :cannotaccess ?p.} => {?a :notauthenticated ?p}.
+
+#If a is not authenticated to treat p, then access is denied
+
+{?a :notauthenticated ?p. ?d :belongsto ?p} => {?a :deny ?d}.
+
+# If a is authenticated, d belongs to p, p has a an optin #except to sensitive data, and d is sensitive then a is denied #access
+{?a :authenticated ?p. ?d :belongsto ?p. ?p :haspolicy :optinsens. ?d :hasnature :sensitive} => {?a :deny ?d}.
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,79 @@
+@prefix : <#>.
+
+#Nurses and Doctors
+:DrSmith :memberof :GrandRiver.
+:DrSmith :onshift :GrandRiver.
+:DrSmith :memberof :StMarys.
+:DrSmith :memberof :StCatherines.
+
+:DrJane :memberof :StMarys.
+:DrJane :onshift :StMarys.
+
+:NurseMary :memberof :GrandRiver.
+:NurseAlex :memberof :StMarys.
+:NurseAlex :onshift :StMarys.
+
+#Hospital policies
+:StMarys :haspolicy :byshift.
+:GrandRiver :haspolicy :byshift.
+:StCatherines :haspolicy :members.
+
+#Patients
+:John :treatedin :GrandRiver.
+:DrSmith :treats :John.
+:NurseMary :treats :John.
+:Tim :treatedin :StMarys.
+:DrSmith :treats :Tim.
+:Peter :treatedin :GrandRiver.
+:DrSmith :treats :Peter.
+:NurseAlex :treats :John.
+:Wendy :treatedin :StMarys.
+:DrJane :treats :Wendy.
+:Tom :treatedin :GrandRiver.
+:DrSmith :treats :Tom.
+:Jenna :treatedin :StMarys.
+:DrJane :treats :Jenna.
+:Sally :treatedin :StCatherines.
+:DrSmith :treats :Sally.
+:Jack :treatedin :StCatherines.
+:DrSmith :treats :Jack.
+
+#Patients' consent policies
+:John :haspolicy :optin.
+:Tim :haspolicy :optin.
+:Peter :haspolicy :optout.
+:Wendy :haspolicy :optoutemer.
+:Tom :haspolicy :optinsens.
+:Jenna :haspolicy :optoutemer.
+:Sally :haspolicy :optin.
+:Jack :haspolicy :optinexcep.
+
+#Patients' documents
+:XRay1 :belongsto :John.
+:STD1 :belongsto :John.
+:BloodTest :belongsto :Tim.
+:CTScan1 :belongsto :Peter.
+:XRay2 :belongsto :Wendy.
+:CTScan2 :belongsto :Tom.
+:HIVRep1 :belongsto :Tom.
+:XRay3 :belongsto :Jenna.
+:CTScan3 :belongsto :Sally.
+:MRI1 :belongsto :Jack.
+
+#Patients' Situations
+:Peter :hassituation :emergency.
+:Wendy :hassituation :emergency.
+
+#Documents' sensitivity
+:STD1 :hasnature :sensitive.
+:HIVRep1 :hasnature :sensitive.
+ 
+#denial of access to specific people
+:Jack :denyaccess :DrSmith.
+
+
+
+
+
+
+
