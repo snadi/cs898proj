@@ -154,16 +154,37 @@ formulae in
 order to process data and make inferences from facts in the data.  N3 is designed as an alternative to RDF's XML syntax with emphasis on (a) designed for a
 human -readability and (b) scribblable language – easy to work with (less verbose compared to RDF/XML)~\cite{notation3}.  In N3, information is represented as a
 set of statements, where each statement is composed of a subject, verb and an object. Each statement ends with a period.
-For example an N3 statement \textbf{{:thermo :temp :high}}. would translate into thermostat temperature is high. Similarly, \textbf{{:heating :power “0”}}.
+For example an N3 statement:
+
+\begin{table}[!h]
+\centering
+ \begin{tabular}{c}
+ \textbf{{:thermo :temp :high}}.\\ 
+ \end{tabular}
+\end{table}
+
+
+would translate into thermostat temperature is high. Similarly,
+
+\begin{table}[!h]
+\centering
+ \begin{tabular}{c}
+ \textbf{{:heating :power “0”}}.\\ 
+ \end{tabular}
+\end{table}
+
 would translate into heating power is zero.  An N3 rule can be described by combining multiple N3 statements as such:
 
-\begin{center}
-\textbf{{:thermo :temp :high}. $=>$ {:heating :power “0”}.}\newline
-\textbf{If the thermostat temperature is high, then the heating power is zero}
-\end{center}
+\begin{table}[!h]
+\centering
+\begin{tabular}{c}
+\textbf{{:thermo :temp :high}. $=>$ {:heating :power “0”}.}\\
+\end{tabular}
+\end{table}
 
 
-As stated before, an N3 formula adds a considerable amount of deduction and inference capabilities to a simple dataset.  “By having rules and data in the same
+means that if the thermostat temperature is high, then the heating power is zero. As stated before, an N3 formula adds a considerable amount of deduction and
+inference capabilities to a simple dataset.  “By having rules and data in the same
 languages, N3 logic provides simplicity in syntax and completeness as rules can operate on themselves and anything written in N3 can be queried in N3
 ”~\cite{berners-lee2008}.
 
