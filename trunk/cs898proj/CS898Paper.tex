@@ -7,13 +7,13 @@
 \begin{document}
 
 
-\title{Patient Consent}
+\title{Electronic Patient Consent Management}
 
 \author{\IEEEauthorblockN{Atif Khan, Sarah Nadi}
 \IEEEauthorblockA{David R. Cheriton School of Computer Science\\
 University of Waterloo\\
 Ontario, Canada\\
-{??, snadi}@uwaterloo.ca}
+{{a78khan, snadi}@uwaterloo.ca}}
 }
 
 % make the title area
@@ -66,8 +66,8 @@ demonstrate these scenarios.
 The rest of this paper is organized as follows. Section~\ref{bg-sec} provides background information about patient consent, N3 notation, and the Euler engine.
 Section~\ref{rel-work} describes some of the related work that has been done to develop an electronic patient consent system. Section~\ref{cons-polic} explains
 the different consent policies, and which ones are included in our prototype. Section~\ref{main-sys} describes the prototype system developed in this
-work. It describes how the information flow in the system as well as the policy rules and facts used. This section also mentions the current limitations of the
-system. Section~\ref{discFuture} outlines possible future additions to the system. Finally, Section~\ref{concl} concludes this paper.
+work. It describes how the information flow in the system as well as the policy rules and facts used. Section~\ref{sec:discFuture} mentions some of the
+limitations of our system and the possible future work we can do to address them. Finally, Section~\ref{concl} concludes this paper.
 
 
 \section{Background}
@@ -83,6 +83,24 @@ participants to ensure the highest level of service (care).  Although the preval
 does raise a major challenge of information management.  More specifically patients would like to maintain control over the various attributes of their private
 and confidential personal information.  The attributes being access, collaboration, and revocation.  We refer to this as the “Consent Challenge” in the medical
 arena.  It is important to note that the consent challenges are applicable to all patient information in all types of formats.  
+
+\begin{table*}[!t]
+\centering
+ \begin{tabular}{m{1cm}|m{9cm}}
+\textbf{Tool} & \textbf{Description}\\
+\hline\hline
+cwm & Developed by the Tim Berners-Lee~\cite{berners-lee2008}, cwm is a forward chain reasoner written in python for N3 and N3Logic.  It can be used for
+querying, checking, transforming and filtering information.  Furthermore, cwm is able to reason using a first order logic but without classical negation.\\
+\hline
+Euler & Euler is an inference engine that supports logic based proofs .  It differs from cwm as it is a backward-chaining reasoner enhanced with Euler path
+detection mechanism~\cite{naudts2003inference}.\\
+\hline
+Pychinko & ychinko is an efficient Python implementation of the classic Rete pattern matching algorithm.  It utilizes an optimized implementation of the
+algorithm to handle facts, expressed as triples, and process them using a set of N3 rules (SOURCE?).\\
+ \end{tabular}
+\label{tab:n3tools}
+\caption{RDF/N3 Reasoning Tools}
+\end{table*}
 
 Provided that the modern health information systems deal with patient data in electronic format, the consent challenge mutates into an electronic consent
 challenge.  Patient consent has to be integrated at an application native level, in order for it to be useful. OKeefe et al.~\cite{okeefe2002implementation}
@@ -110,7 +128,7 @@ The semantic web technologies offer some primitive building blocks upon which a 
 traditional information exchange protocols utilize a static predefined schema in order to define the data structure of the shared information. All exchanged
 information is then governed (described) using the static schema.  The semantic web offers a different approach to solve the information exchange problem
 between two dissimilar parties.  Each dataset is accompanied by a corresponding vocabulary.  Each vocabulary is described in a predefined and well understood
-format, therefore making it possible to describe data in ways that make its semantics explicit and hence discoverable automatically in software .
+format, therefore making it possible to describe data in ways that make its semantics explicit and hence discoverable automatically in software.
 
 “RDF is a standard model for data interchange on the Web. RDF has features that facilitate data merging even if the underlying schemas differ, and it
 specifically supports the evolution of schemas over time without requiring all the data consumers to be changed~\cite{rdfsite}”.  These properties of RDF make
@@ -133,24 +151,6 @@ As stated before, an N3 formula adds a considerable amount of deduction and infe
 languages, N3Logic provides simplicity in syntax and completeness as rules can operate on themselves and anything written in N3 can be queried in N3
 ”~\cite{berners-lee2008}. A reasoning engine is required in order to make use of the N3 rules.  There are various RDF/N3 reasoners available.
 Table~\ref{tab:n3tools} highlights some of the most popular ones.
-
-\begin{table*}
-\centering
- \begin{tabular}{m{1cm}|m{9cm}}
-\textbf{Tool} & \textbf{Description}\\
-\hline\hline
-cwm & Developed by the Tim Berners-Lee~\cite{berners-lee2008}, cwm is a forward chain reasoner written in python for N3 and N3Logic.  It can be used for
-querying, checking, transforming and filtering information.  Furthermore, cwm is able to reason using a first order logic but without classical negation.\\
-\hline
-Euler & Euler is an inference engine that supports logic based proofs .  It differs from cwm as it is a backward-chaining reasoner enhanced with Euler path
-detection mechanism~\cite{naudts2003inference}.\\
-\hline
-Pychinko & ychinko is an efficient Python implementation of the classic Rete pattern matching algorithm.  It utilizes an optimized implementation of the
-algorithm to handle facts, expressed as triples, and process them using a set of N3 rules (SOURCE?).\\
- \end{tabular}
-\label{tab:n3tools}
-\caption{RDF/N3 Reasoning Tools}
-\end{table*}
 
 
 \subsection{Euler}
@@ -215,6 +215,15 @@ why they are trying to access it.
 \item \textit{opt-out with emergency override}: In this case, the patient agrees to grant access to their information only if it is an emergency situation. 
 \end{itemize}
 
+\begin{figure}[!t]
+ \centering
+ \includegraphics[scale=0.25,keepaspectratio=true]{./main.png}
+ % main.png: 1004x596 pixel, 72dpi, 35.41x21.02 cm, bb=0 0 1004 596
+ \caption{Example Scenario}
+ \label{fig:mainscreen}
+\end{figure}
+
+
 \section{Our System Name}
 \label{main-sys}
 
@@ -228,10 +237,13 @@ privacy policies. Similarly, we also assume that all the information about the d
 focus on answering the question of whether a doctor or nurse can access a certain document. This is done by loading the facts available and our rule set into
 Euler, and then querying it to see if a certain doctor or nurse can access a certain document. If access is granted, then we present the user with the proof
 provided by Euler. If no proof is found, we check if we can find an explicit deny rule for the same actor and document in the original query. If so, we present
-the user
-with the proof of why access has been denied.
+the user with the proof of why access has been denied. Figure~\ref{fig:mainscreen} shows the setup of our tool. In this scenario, we are checking if Dr Smith
+has access to XRay1. In the ``Figure'' tab, a visual representation of all the facts related to this scenario is presented. Once the user clicks on
+``Execute'', our tool would display Euler's generated proof as shown in Figure~\ref{fig:proof}. In this case, access has been granted as shown by the note in
+the top right corner. The proof shows the evidence used to reach this conclusion. It shows the different facts that have been used to satisfy the appropriate
+rule to either grant or deny access.
 
-PUT SNAPSHOTS HERE
+
 
 \subsection{Facts in N3 Notation}
 
@@ -247,15 +259,23 @@ consent policies. These are coded as optin, optinsens, optinexcep, and optout re
 our designed access policies can be successfully tested. 
 Appendix~\ref{sec:facts-file} shows the n3 facts file we use to represent the facts shown in Figure~\ref{fig:allfacts}.
 
+\begin{figure}[!t]
+ \centering
+ \includegraphics[scale=0.25,keepaspectratio=true]{./proof.png}
+ % proof.png: 996x597 pixel, 72dpi, 35.13x21.06 cm, bb=0 0 996 597
+ \caption{Query Result \& Proof of Scenario in Figure~\ref{fig:mainscreen}}
+ \label{fig:proof}
+\end{figure}
+
+\subsection{Access Policies in N3 Notation}
+\label{rules-sec}
+
 \begin{figure*}[t]
 \centering
 \includegraphics[width=16cm,height=14cm]{BigPicture.png}
 \caption{Tested Facts}
 \label{fig:allfacts}
 \end{figure*}
-
-\subsection{Access Policies in N3 Notation}
-\label{rules-sec}
 
 In our current prototype, we have designed the basic set of rules that can later be expanded for more sophisticated rule nesting. The complete rule file can be
 found in Appendix~\ref{sec:rules-file}. There are six possible rule conclusions in our rule set. The two main conclusions are allowing or denying
@@ -294,17 +314,9 @@ access.
 
 \end{itemize}
 
-
-\subsection{Tested Scenarios}
-
-Given the above facts, we designed twelve different scenarios to test our different access policies. Table~\ref{tab:scenarios} summarizes these scenarios and
-an their expected results. In this table, we use plain English to describe the query and facts instead of n3 notation for better illustration. These facts are
-based on Figure~\ref{fig:allfacts}. We write the queries in the form of ``some person $\rightarrow$ some document'' which means that this person is trying to
-access this document, and we are trying to determine whether we should grant them access or not.
-
 \begin{table*}[!t]
 \centering
-\scalebox{0.8}{
+\scalebox{0.75}{
  \begin{tabular}{m{3cm}|m{9cm}|m{5cm}}
 \textbf{Query}&\textbf{Associated Facts}&\textbf{Expected Results}\\
 \hline\hline
@@ -435,15 +447,40 @@ Dr Smith $\rightarrow$ MRI1 & \begin{itemize}
 
 
 
-\subsection{Limitations}
+\subsection{Tested Scenarios}
 
-Describes the current limitations of our system
+Given the above facts, we designed twelve different scenarios to test our different access policies. Table~\ref{tab:scenarios} summarizes these scenarios and
+an their expected results. In this table, we use plain English to describe the query and facts instead of n3 notation for better illustration. These facts are
+based on Figure~\ref{fig:allfacts}. We write the queries in the form of ``some person $\rightarrow$ some document'' which means that this person is trying to
+access this document, and we are trying to determine whether we should grant them access or not. As shown in Table~\ref{tab:scenarios}, we chose scenarios that
+show how the different consent policies behave in different situations. For example, Tom has an opt in policy with the exception of sensitive documents. When
+Dr Smith tries to access a non-sensitive document, CTScan2, he was granted access. However, when he tries to access a sensitive document, STD1, he was denied
+access. Similarly, we tested different combination of facts for the other policies to demonstrate how they produce different results in different situations.
+
 
 \section{Discussion and Future Work}
-\label{discFuture}
+\label{sec:discFuture}
 
-can split into two sections if there's a lot of things to discuss
+Our current work is a simple prototype demonstrating the applicability of using ideas from the semantic web to the problem of reasoning with patient consent.
+Our prototypes shows that using a reasoning engine such as Euler successfully provides the needed results. However, there are still some limitations to our
+solution. Some of them can be easily implemented as future work, and some of them are due to the nature of N3 notation, and the way Euler works. 
 
+Currently, we can only answer queries which have one answer. For example, we cannot answer queries in the form of ``Who has access to a specific document?''
+This is because
+Euler returns the first answer it finds which satisfies the query. It does not look for all possible solutions. There may be ways to get around this which we
+are not currently aware of. As future work, it may be nice to provide such a querying functionality in the system.
+
+To be able to address all medical situations, our rule set must be expanded. In this prototype, we demonstrated the basic consent policies. However, there are
+many variations that can be added. For example, allowing family members to ask for access. The basic rule construction would be the same, but we just need to
+build a rule ontology that accounts for all the possible situations. This leads to mentioning the need for more sophisticated rule writing in N3. N3
+notation supports rule nesting which would support more elaborate policies. So far, we have focused on trying the basic features of writing
+rules in N3. The next step would be to expand the rule set to include more consent policies using rule nesting.
+
+In our current prototype, we do not discover policy conflicts. This would be a very useful feature to add. First, it would allow us to discover any mistakes
+made while creating the rules. This would also be useful to detect conflicts between different levels of policies. For example, a hospital may have specific
+policies that allow access to patient information in a specific situation, while the province policies deny access. Detecting such conflicts and resolving them
+is important to achieve a fully functional electronic consent system. Finally, we currently only support ``access'' or ``deny'' results. In order to be more
+specific, we plan to support more granular access levels in the future. For example, read, write, modify, delete etc.
 
 \section{Conclusion}
 \label{concl}
@@ -459,7 +496,7 @@ The conclusion goes here.
 \section*{Acknowledgment}
 
 
-The authors would like to thank Dr. Helen Chen for suggesting this problem to us, and guiding us  
+We would like to thank Dr. Helen Chen for her guidance through the development of this prototype.  
 
 
 
@@ -473,15 +510,159 @@ The authors would like to thank Dr. Helen Chen for suggesting this problem to us
 
 \appendices
 
+\onecolumn
+
 \section{Facts File}
 \label{sec:facts-file}
 
-FACTS FILE WILL GO HERE
+@prefix : $<\#>$. \newline
+\newline
+\#Nurses and Doctors \newline
+:DrSmith :memberof :GrandRiver.\newline
+:DrSmith :onshift :GrandRiver.\newline
+:DrSmith :memberof :StMarys.\newline
+:DrSmith :memberof :StCatherines.\newline
+\newline
+:DrJane :memberof :StMarys.\newline
+:DrJane :onshift :StMarys.\newline
+\newline
+:NurseMary :memberof :GrandRiver.\newline
+:NurseAlex :memberof :StMarys.\newline
+:NurseAlex :onshift :StMarys.\newline
+\newline
+\#Hospital policies\newline
+:StMarys :haspolicy :byshift.\newline
+:GrandRiver :haspolicy :byshift.\newline
+:StCatherines :haspolicy :members.\newline
+\newline
+\#Patients\newline
+:John :treatedin :GrandRiver.\newline
+:DrSmith :treats :John.\newline
+:NurseMary :treats :John.\newline
+:Tim :treatedin :StMarys.\newline
+:DrSmith :treats :Tim.\newline
+:Peter :treatedin :GrandRiver.\newline
+:DrSmith :treats :Peter.\newline
+:NurseAlex :treats :John.\newline
+:Wendy :treatedin :StMarys.\newline
+:DrJane :treats :Wendy.\newline
+:Tom :treatedin :GrandRiver.\newline
+:DrSmith :treats :Tom.\newline
+:Jenna :treatedin :StMarys.\newline
+:DrJane :treats :Jenna.\newline
+:Sally :treatedin :StCatherines.\newline
+:DrSmith :treats :Sally.\newline
+:Jack :treatedin :StCatherines.\newline
+:DrSmith :treats :Jack.\newline
+\newline
+\#Patients' consent policies\newline
+:John :haspolicy :optin.\newline
+:Tim :haspolicy :optin.\newline
+:Peter :haspolicy :optout.\newline
+:Wendy :haspolicy :optoutemer.\newline
+:Tom :haspolicy :optinsens.\newline
+:Jenna :haspolicy :optoutemer.\newline
+:Sally :haspolicy :optin.\newline
+:Jack :haspolicy :optinexcep.\newline
+\newline
+\#Patients' documents\newline
+:XRay1 :belongsto :John.\newline
+:STD1 :belongsto :John.\newline
+:BloodTest :belongsto :Tim.\newline
+:CTScan1 :belongsto :Peter.\newline
+:XRay2 :belongsto :Wendy.\newline
+:CTScan2 :belongsto :Tom.\newline
+:HIVRep1 :belongsto :Tom.\newline
+:XRay3 :belongsto :Jenna.\newline
+:CTScan3 :belongsto :Sally.\newline
+:MRI1 :belongsto :Jack.\newline
+\newline
+\#Patients' Situations\newline
+:Peter :hassituation :emergency.\newline
+:Wendy :hassituation :emergency.\newline
+\newline
+\#Documents' sensitivity\newline
+:STD1 :hasnature :sensitive.\newline
+:HIVRep1 :hasnature :sensitive.\newline
+ \newline
+\#Denial of access to specific people\newline
+:Jack :denyaccess :DrSmith.\newline
 
 \section{Rules File}
 \label{sec:rules-file}
 
-RULES FILE WILL GO HERE
+\#These rules checks if a has possible access to patient p's records. a must be a member of the same organization that p is \newline
+\#treated in. Depending on the organization policy, member may have to be on shift. \newline 
+\newline
+{?a :memberof ?o. ?o :haspolicy :byshift. ?a :onshift ?o. ?p :treatedin ?o.} $=>$ {?a :possibleaccess ?p}.\newline 
+\newline
+{?a :memberof ?o. ?o :haspolicy :members. ?p :treatedin ?o.}  $=>$ {?a :possibleaccess ?p}.\newline
+\newline
+\#If a has possible access to patient p's records, and a treats p then a is authenticated to access p's records \newline
+\newline
+{?a :possibleaccess ?p. ?a :treats ?p.}  $=>$ {?a :authenticated ?p}.\newline 
+\newline
+\#If a has possible access to d, and p has a full optin policy then a can access d \newline
+\newline
+{?a :authenticated ?p. ?d :belongsto ?p. ?p :haspolicy :optin. }  $=>$ {?a :access ?d}.\newline
+\newline
+\#If a has possible access to d, and p has a an optout policy with emergency override and situation s is an emergency \newline
+\#situation, then a can access d even if the dr is not the treating doctor \newline
+\newline
+{?a :possibleaccess ?p. ?d :belongsto ?p. ?p :haspolicy :optoutemer. ?p :hassituation :emergency} = $=>$ {?a :access ?d}. \newline
+\newline
+\#If p has an optin policy with exceptions, d belongs to p, and a is not one of those exceptions, then a is granted access\newline
+\#to d. \newline
+\newline
+{?a :authenticated ?p. ?d :belongsto ?p. ?p :haspolicy :optinexcep. $<$facts.n3$>$ log:notIncludes {?p :denyaccess ?a}}  $=>$ {?a :access ?d}. \newline
+\newline
+\#If a has possible access to d, p has a opt in policy except for sensitive data, and d is not sensitive, then a \newline
+\#can access d \newline
+\newline
+{?a :authenticated ?p. ?d :belongsto ?p. ?p :haspolicy :optinsens. $<$facts.n3$>$ log:notIncludes {?d :hasnature :sensitive}}  $=>$ {?a :access ?d}. \newline
+\newline
+\#DENIAL RULES
+\newline
+\#No possible access if a is not a member of the same organization p is treated in \newline
+\newline
+{?p :treatedin ?o. $<$facts.n3$>$ log:notIncludes {?a :memberof ?o}}  $=>$ {?a :cannotaccess ?p}.
+\newline
+\#No possible access if a is not on shift in an organization that has a by shift policy \newline
+\newline
+{?p :treatedin ?o. ?a :memberof ?o. ?o :haspolicy :byshift. $<$facts.n3$>$ log:notIncludes {?a :onshift ?o}}  $=>$ {?a :cannotaccess ?p}.
+\newline
+\#Not authenticated if a has possible access but does not treat p \newline
+\newline
+{?a :possibleaccess ?p. $<$facts.n3$>$ log:notIncludes {?a :treats ?p}}  $=>$ {?a :notauthenticated ?p}.
+\newline
+\#If a has possible access to d, and p has a an optout policy with emergency override and situation s is NOT an emergency \newline
+\#situation, then a is denied access.\newline
+\newline
+{?a :possibleaccess ?p. ?d :belongsto ?p. ?p :haspolicy :optoutemer. $<$facts.n3$>$ log:notIncludes{?p :hassituation :emergency}}  $=>$ {?a :deny ?d}. \newline
+\newline
+\#If p has an opt in policy with exceptions and explicitly denies a doctor then access to this document is denied \newline
+\newline
+{?a :authenticated ?p. ?d :belongsto ?p. ?p :haspolicy :optinexcep. ?p :denyaccess ?a}  $=>$ {?a :deny ?d}. \newline
+\newline
+\# If a is authenticated, and p has a full optout policy, and \#document d belongs to patient p then a is denied access \newline
+\#to d  \newline
+\newline
+{?a :authenticated ?p. ?d :belongsto ?p. ?p :haspolicy :optout.}  $=>$ {?a :deny ?d}. \newline
+\newline
+\#Not authenticated if a cannot access p (even though a treats p (maybe not on shift)). \newline
+\newline
+{?a :cannotaccess ?p.}  $=>$ {?a :notauthenticated ?p}. \newline
+\newline
+\#If a is not authenticated to treat p, then access is denied \newline
+\newline
+{?a :notauthenticated ?p. ?d :belongsto ?p}  $=>$ {?a :deny ?d}. \newline
+\newline
+\#If a is authenticated, d belongs to p, p has a an optin \#except to sensitive data, and d is sensitive then a is denied \newline
+\#access \newline
+\newline
+{?a :authenticated ?p. ?d :belongsto ?p. ?p :haspolicy :optinsens. ?d :hasnature :sensitive}  $=>$ {?a :deny ?d}. \newline
+
+
 
 % that's all folks
 \end{document}
