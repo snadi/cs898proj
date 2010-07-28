@@ -21,7 +21,15 @@ Ontario, Canada\\
 
 
 \begin{abstract}
-The abstract goes here.
+Managing patients' information is very important for proper health care. As Information Communication Technologies (ICT) is being integrated into the medical
+domain, patients' information is becoming increasingly managed through electronic systems. This poses the problem of managing patients' privacy
+electronically according to each patient's consent policy. Accordingly, there is a need for an electronic patient consent management
+system which captures patients' consent, and is able to process it and decide who can access the patient's information accordingly. In this paper, we propose
+such a system where patient information and consent policies as well as other access policies are represented in Notation 3 (N3). A reasoning engine,
+Euler, is used to determine if access should be granted or denied according to the patient's consent policy. We built a prototype to show the applicability of
+using an RDF notation, such as N3, and Euler. We currently support five different consent policies: opt in, opt in with exceptions to specific people, opt in
+with exceptions to sensitive information, opt out, and opt out with emergency override. In our prototype, we demonstrate how these consent policies affect
+information access in different patient situations through twelve different scenarios.
 \end{abstract}
 
 
@@ -35,23 +43,26 @@ accordance with patient consent.  It has been argued that a patient should be aw
 specify how this information can be used~\cite{kluge2004informed}. Accordingly, each patient should choose a consent policy that reflects how they would like
 their medical information to be used. Ideally, in an electronic system, the system would automatically grant or deny permission to
 accessing a patient's record according to their specific consent policy. However, it is often difficult, if not impossible, to predict all future-use scenarios
-and enforce patient consent in an appropriate manner.
+and enforce patient consent in an appropriate manner. It should be noted that in this context, patient consent is related to accessing medical information.
+This is different from the patient consent needed to provide certain treatment or perform a specific procedure, for example.
 
-There are many aspects of this problem that need to be solved. First, how can patient consent be captured electronically in an effective way? Second, how can
-the captured consent policies be represented and processed internally? Finally, how can we define consent policies that protect the patient privacy, but do not
-compromise their health at the same time? All three problems are very important in this domain. However, in this paper, we focus on the second problem, and
+There are many aspects of this problem that need to be solved. First, how can patient consent be effectively and accurately captured electronically?
+Second, how can the captured consent policies be represented and processed internally? Finally, how can we define consent policies that protect the patient
+privacy, but do not compromise their health at the same time? All three problems are very important in this domain. However, in this paper, we focus on the
+second problem, and
 briefly touch upon the third.
 
 
-To address these problems, we propose building a policy based patient consent management system. The system would utilize (previously captured) patient consent
+To address these problems, we propose building a policy based (rule based) patient consent management system. The system would utilize (previously captured)
+patient consent
 information and various operational policies as input. Each policy will be represented by a set of RDF rules in Notation 3 (N3)~\cite{N3not}.  We will use the
 Euler proof mechanism~\cite{eurlorprf} to compute (a) the result and (b) the proof of the aggregated rules.  
 
 
-Our goal is to demonstrate that various actions on patient information can be protected in a real-time manner by utilizing the policy based consent management.
+Our goal is to demonstrate that access to patient information can be protected in a real-time manner by utilizing policy based consent management.
 The advantage of using Euler to generate a proof is that in the future, proofs can be validated between different systems when exchanging EHRs. This offers a
 major improvement over the current industry practice of patient consent management and secondary use of patient information. This paper describes the
-preliminary effort in this direction where we apply our idea to a selection of consent policies and situations.
+preliminary effort in this direction where we apply our idea to a selection of consent policies and situations, and produce a working prototype.
 
 
 The contributions of this work are as follows: 
@@ -59,14 +70,14 @@ The contributions of this work are as follows:
 \begin{itemize}
     \item A set of consent policies represented in N3 notation. These are expressed as N3 rules which allow or deny access to the specified documents.
 
-\item A collection of executable scenarios that show how the consent policies are applied in different situations. A Java application is developed to
-demonstrate these scenarios.
+\item A collection of executable scenarios that show how the consent policies are applied in different situations.
+\item A working prototype, implemented in Java, to demonstrate these scenarios.
 \end{itemize}
 
 The rest of this paper is organized as follows. Section~\ref{bg-sec} provides background information about patient consent, N3 notation, and the Euler engine.
 Section~\ref{rel-work} describes some of the related work that has been done to develop an electronic patient consent system. Section~\ref{cons-polic} explains
-the different consent policies, and which ones are included in our prototype. Section~\ref{main-sys} describes the prototype system developed in this
-work. It describes how the information flow in the system as well as the policy rules and facts used. Section~\ref{sec:discFuture} mentions some of the
+the different consent policies, and specifies those included in our prototype. Section~\ref{main-sys} describes the prototype system developed in this
+work. It describes the information flow in the system as well as the policy rules and facts used. Section~\ref{sec:discFuture} mentions some of the
 limitations of our system and the possible future work we can do to address them. Finally, Section~\ref{concl} concludes this paper.
 
 
@@ -95,7 +106,7 @@ querying, checking, transforming and filtering information.  Furthermore, cwm is
 Euler & Euler is an inference engine that supports logic based proofs .  It differs from cwm as it is a backward-chaining reasoner enhanced with Euler path
 detection mechanism~\cite{naudts2003inference}.\\
 \hline
-Pychinko & ychinko is an efficient Python implementation of the classic Rete pattern matching algorithm.  It utilizes an optimized implementation of the
+Pychinko & Pychinko is an efficient Python implementation of the classic Rete pattern matching algorithm.  It utilizes an optimized implementation of the
 algorithm to handle facts, expressed as triples, and process them using a set of N3 rules (SOURCE?).\\
  \end{tabular}
 \label{tab:n3tools}
@@ -103,11 +114,11 @@ algorithm to handle facts, expressed as triples, and process them using a set of
 \end{table*}
 
 Provided that the modern health information systems deal with patient data in electronic format, the consent challenge mutates into an electronic consent
-challenge.  Patient consent has to be integrated at an application native level, in order for it to be useful. OKeefe et al.~\cite{okeefe2002implementation}
+challenge.  Patient consent has to be integrated at an application native level in order for it to be useful. OKeefe et al.~\cite{okeefe2002implementation}
 coin the term of eConsent and list the following as key attributes of an electronic patient consent management system:
 
 \begin{itemize}
- \item There is no single “right” solution to the eConsent challenge, as an eConsent system needs to be tailored for the needs of different environments. For
+ \item There is no single “right” solution to the eConsent challenge as an eConsent system needs to be tailored for the needs of different environments. For
 example, the degree to which eConsent plays the role of a gatekeeper, active audit or passive record should be customizable. 
 \item The introduction of an eConsent system will formalize and potentially affect existing trust relationships between consumers and providers. 
 \item A simple yet flexible model for eConsent, supported by education and training, is key to the acceptance and adoption of eConsent. 
@@ -119,8 +130,9 @@ Mental Health Clinics, Sexual Health Clinics and Hospitals could be established.
 \subsubsection*{The Semantic Challenge}
 Although the above mentioned features promise a solid foundation, they lack some of the practical considerations that might arise from a multi-vendor,
 multi-party health care information management infrastructure such as ours in Canada.  When different parties and their corresponding health information systems
-are required to collaborate, the information exchange mechanism may not be optimal and may require a lowest common denominator approach to information exchange.
- The major hurdle is not in the syntactic rather in the semantic interoperability of information exchange.  This impedance mismatch (between different vendor
+are required to collaborate, the information exchange mechanism may not be optimal and may require a lowest common denominator approach to information
+exchange. The major hurdle is not in the syntactic side, but rather in the semantic interoperability of information exchange.  This impedance mismatch (between
+different vendor
 systems) poses one of the major challenges to universal patient consent management. To apply the governing rules of patient consent, one must have a sound
 semantic understanding of the consent as well as the data.  We term this as the “Semantic Challenge”.  
 
@@ -132,30 +144,34 @@ format, therefore making it possible to describe data in ways that make its sema
 
 “RDF is a standard model for data interchange on the Web. RDF has features that facilitate data merging even if the underlying schemas differ, and it
 specifically supports the evolution of schemas over time without requiring all the data consumers to be changed~\cite{rdfsite}”.  These properties of RDF make
-it an ideal candidate for information management and exchange for medical information, where the datasets (i) have a particular large set of consumers (ii)
+it an ideal candidate for management and exchange of medical information where the datasets (i) have a particular large set of consumers (ii)
 enjoy a long life span and (iii) are constantly evolving.
 
 \subsection{N3 Notation}
 
-N3 is based on RDF standards and represents an analogous syntax to RDF/XML to represent data.  Furthermore, N3 adds extra features like rules and formulae in
+Notation 3 (N3) is based on RDF standards and represents an analogous syntax to RDF/XML to represent data.  Furthermore, N3 adds extra features like rules and
+formulae in
 order to process data and make inferences from facts in the data.  N3 is designed as an alternative to RDF's XML syntax with emphasis on (a) designed for a
-human -readability and (b) scribblable language – easy to work with (less verbose compared to RDF/XML)~\cite{notation3}.  In N3 information is represented as a
+human -readability and (b) scribblable language – easy to work with (less verbose compared to RDF/XML)~\cite{notation3}.  In N3, information is represented as a
 set of statements, where each statement is composed of a subject, verb and an object. Each statement ends with a period.
-For example an N3 statement \textbf{{:thermo :temp :high}}. would translate into thermostat temperature is high, or \textbf{{:heating :power “0”}}. would
-translate into heating power is zero.  An N3 rule can be described by combining multiple N3 statements as such:
+For example an N3 statement \textbf{{:thermo :temp :high}}. would translate into thermostat temperature is high. Similarly, \textbf{{:heating :power “0”}}.
+would translate into heating power is zero.  An N3 rule can be described by combining multiple N3 statements as such:
 
+\begin{center}
 \textbf{{:thermo :temp :high}. $=>$ {:heating :power “0”}.}\newline
 \textbf{If the thermostat temperature is high, then the heating power is zero}
+\end{center}
+
 
 As stated before, an N3 formula adds a considerable amount of deduction and inference capabilities to a simple dataset.  “By having rules and data in the same
-languages, N3Logic provides simplicity in syntax and completeness as rules can operate on themselves and anything written in N3 can be queried in N3
-”~\cite{berners-lee2008}. A reasoning engine is required in order to make use of the N3 rules.  There are various RDF/N3 reasoners available.
-Table~\ref{tab:n3tools} highlights some of the most popular ones.
+languages, N3 logic provides simplicity in syntax and completeness as rules can operate on themselves and anything written in N3 can be queried in N3
+”~\cite{berners-lee2008}.
 
 
 \subsection{Euler}
 
-Brief summary of how Euler works and how it provides a proof. Mention things like one query per file, and first match only etc.
+A reasoning engine is required in order to make use of the N3 rules.  There are various RDF/N3 reasoners available.
+Table~\ref{tab:n3tools} highlights some of the most popular ones. We chose to use Euler because ???????????????
 
 
 \section{Related Work}
@@ -163,7 +179,7 @@ Brief summary of how Euler works and how it provides a proof. Mention things lik
 
 There are numerous studies dealing with electronic consent. However, these studies ignore the semantic aspect of information and focus
 mainly on security aspects~\cite{reid2003, chen2009identity, blobel2004authorisation}. O'Keefe et al.~\cite{okeefe2002implementation} undertake a feasibility
-study of electronic consent management system in medical arena. The expose various challenges faced by different consumer groups of electronic consent
+study of electronic consent management system in medical arena. They expose various challenges faced by different consumer groups of electronic consent
 management systems.  The study provides a sound set of recommendations for a generic implementation of a patient consent management system.
 Song et al.~\cite{song2002patient} introduce the notion of an e-consent object, encompassing all relevant information concerning the patient consent in the
 e-consent object. Lack of semantics is the biggest draw back of this model.  The rules of consent are not expressed in any formal language and therefore are
@@ -171,154 +187,20 @@ ambigious at interpretation time.
 Win et al.~\cite{win2002implementing} describe an interface based approach through which patient consent can be expressed.  The solution lacks organic growth as
 it hard codes the information and lacks the required flexibility for the user.
 Pruski et al.~\cite{pruski2010} propose e-CRL language designed with the following two goals in mind (a) facilitate capturing of patient consent information (b)
-formalize the expression of patient consent information.  “The language has a well defined BNF based syntax and semantics defined based on first-order logic and
-set theory which allow eHealth systems to fully control the access to critical health data.”.  Although the e-CRL language provides support for semantics,
-it lacks some important features such as proof generation.  Furthermore, the defined language does not integrate with the RDF based solutions and approaches
+formalize the expression of patient consent information.  ``The language has a well defined BNF based syntax and semantics defined based on first-order logic
+and set theory which allow eHealth systems to fully control the access to critical health data.''  Although the e-CRL language provides support for semantics,
+it lacks some important features such as proof generation.  Furthermore, the defined language is not compatible with the RDF based solutions and approaches
 making integration difficult.
 
 
 \section{Consent Policies}
 \label{cons-polic}
 
-There are different forms of consent that a patient may choose from. Coiera and Clarke~\cite{coiera2004consent} define four general forms of patient consent as
-follows:
-
-\begin{itemize}
- \item \textit{General consent}: This is also generally known as ``opt-in'' which means that the patient agrees that any health care professional may access
-all of their health data for the purpose of providing care to them.
-\item \textit{General consent with specific denial(s)}: This means that the patient specifically defines certain exceptions to their general consent policy.
-These exceptions may be related to particular data or to particular people.
-\item \textit{General denial with specific consent(s)}: In this case, the patient generally denies access to their data except in specific circumstances. These
-may include disclosure for specific purposes or to specific people or the disclosure of certain types of information.
-\item \textit{General denial}: This is the strictest level of consent a patient may have. In this case, the patient denies the use of their information for any
-future event irrelevant of the circumstances that may occur. This consent policy is also generally known as ``opt-out''.
-\end{itemize}
-
-Pruski~\cite{pruski2010} use these four forms of consent while designing their rule-based language for describing patient consent policies. Additionally,
-Pruski outlines the key requirements that must be taken into consideration while dealing with patient consent. These are expressing who can access the data,
-the kind and the sensitivity of the data, the period for which a consent policy is valid, the purpose of why the data is being accessed, and what kind of
-consent is given to the user requesting the data. 
-
-In our work, we consider both the four forms of patient consent as well as some of the requirements proposed by Pruski. In our current prototype, we support
-five types of patient consent policies as follows:
-
-\begin{itemize}
- \item \textit{opt-in}: As described above, a patient who has an opt-in policy allows any treating doctor to access their information. In our system, we also
-add other conditions that need to be met such as that the health care professional should be a member of the admitting organization etc. These details will be
-discussed in Section~\ref{main-sys}.
-\item \textit{opt-in except for sensitive documents}: In this case, the patient allows access to all their information except for documents that are classified
-as sensitive. For example, these may include HIV tests or Sexually Transmitted Diseases. 
-\item \textit{opt-in except for certain people}: In this case, the patient allows access to all their information, but specifically denies certain individuals
-from accessing their data.
-\item \textit{opt-out}: A patient with an opt-out policy explicitly denies access to all their information regardless of who is trying to access the data or
-why they are trying to access it.
-\item \textit{opt-out with emergency override}: In this case, the patient agrees to grant access to their information only if it is an emergency situation. 
-\end{itemize}
-
-\begin{figure}[!t]
- \centering
- \includegraphics[scale=0.25,keepaspectratio=true]{./main.png}
- % main.png: 1004x596 pixel, 72dpi, 35.41x21.02 cm, bb=0 0 1004 596
- \caption{Example Scenario}
- \label{fig:mainscreen}
-\end{figure}
-
-
-\section{Our System Name}
-\label{main-sys}
-
-Not sure of this section's title but if we have a name for our system, that would do for the title. 
-
-\subsection{Information Flow}
-\label{info-flow}
-
-Currently, our system assumes that all the information needed is already captured. That is, all information about the patient, their documents as well as their
-privacy policies. Similarly, we also assume that all the information about the different hospitals, doctors, and nurses is already present. In this sense, we
-focus on answering the question of whether a doctor or nurse can access a certain document. This is done by loading the facts available and our rule set into
-Euler, and then querying it to see if a certain doctor or nurse can access a certain document. If access is granted, then we present the user with the proof
-provided by Euler. If no proof is found, we check if we can find an explicit deny rule for the same actor and document in the original query. If so, we present
-the user with the proof of why access has been denied. Figure~\ref{fig:mainscreen} shows the setup of our tool. In this scenario, we are checking if Dr Smith
-has access to XRay1. In the ``Figure'' tab, a visual representation of all the facts related to this scenario is presented. Once the user clicks on
-``Execute'', our tool would display Euler's generated proof as shown in Figure~\ref{fig:proof}. In this case, access has been granted as shown by the note in
-the top right corner. The proof shows the evidence used to reach this conclusion. It shows the different facts that have been used to satisfy the appropriate
-rule to either grant or deny access.
-
-
-
-\subsection{Facts in N3 Notation}
-
-To test our access policies, we chose a set of facts that can reflect all the situations we wish to test. Figure~\ref{fig:allfacts} shows all the facts we use
-to test our rules. There are four different types of actors: doctors, nurses, hospitals and patients. All hospitals have a ``members only'' policy where only
-members of the hospital are authorized to access patient information. Some hospitals enforce a ``on shift'' only policy where only members that are currently on
-shift may be able to access any patient information. Doctors and nurses can be members of more than one hospital, but can only be on shift in one hospital at a
-time. A patient is treated in a hospital, and own documents that reflect their medical information. Some documents are classified as sensitive. Currently, we
-only classify documents as sensitive or non sensitive (the default). In the future, we may wish to add different types of classifications such that a patient
-may have more flexibility in specifying which category of documents do they grant access to. Additionally, a patient may be in an emergency situation. The
-default is that the patient is in a regular episode of care. As indicated in Section~\ref{cons-polic}, we currently support five different types of patient
-consent policies. These are coded as optin, optinsens, optinexcep, and optout respectively. We assigned the different policies to the patients such that all of
-our designed access policies can be successfully tested. 
-Appendix~\ref{sec:facts-file} shows the n3 facts file we use to represent the facts shown in Figure~\ref{fig:allfacts}.
-
-\begin{figure}[!t]
- \centering
- \includegraphics[scale=0.25,keepaspectratio=true]{./proof.png}
- % proof.png: 996x597 pixel, 72dpi, 35.13x21.06 cm, bb=0 0 996 597
- \caption{Query Result \& Proof of Scenario in Figure~\ref{fig:mainscreen}}
- \label{fig:proof}
-\end{figure}
-
-\subsection{Access Policies in N3 Notation}
-\label{rules-sec}
-
-\begin{figure*}[t]
-\centering
-\includegraphics[width=16cm,height=14cm]{BigPicture.png}
-\caption{Tested Facts}
-\label{fig:allfacts}
-\end{figure*}
-
-In our current prototype, we have designed the basic set of rules that can later be expanded for more sophisticated rule nesting. The complete rule file can be
-found in Appendix~\ref{sec:rules-file}. There are six possible rule conclusions in our rule set. The two main conclusions are allowing or denying
-access. However, we need the other rules to reach these conclusions. The following is the list of these four conclusions:
-
-\begin{itemize}
- \item \textbf{\textit{possibleaccess}}: A person $a$ has possible access to patient $p$ if they are a member of the organization $p$ is treated in.
-Additionally, if this organization has a by shift policy, then $a$ must be on shift to have possible access.
-\item \textbf{\textit{authenticated}}: A person $a$ is authenticated to access a patient $p$'s information if they have possible access to $p$, and they are
-treating $p$. The reason possible access is separated from authentication is that in emergency situations, a non treating doctor might need to access this
-patient's information. In that case, they still need to satisfy the possible access rule.
-\item \textbf{\textit{access}}: A person $a$ is granted access to a document $d$ if one of the following cases is true:
-\begin{itemize}
- \item $a$ is authenticated to access $p$'s information, $d$ belongs to $p$, and $p$ has an opt in policy.
-\item $a$ has possible access to $p$'s information, $d$ belongs to $p$, $p$ has an opt out policy with emergency override, and $p$ is in an emergency situation.
-\item $a$ is authenticated to access $p$'s information, $d$ belongs to $p$, $p$ has an opt in policy with exceptions, and $a$ is not one of those exceptions.
-\item $a$ is authenticated to access $p$'s information, $d$ belongs to $p$, $p$ has an opt in policy except for sensitive data, and $d$ is not classified as
-sensitive.
-\end{itemize}
-\item \textbf{\textit{cannotaccess}}: This is the converse of the ``possibleaccess'' rule. A person $a$ does not have possible access $p$'s information if $p$
-is treated in $o$, but $a$ is not a member of $o$. Similarly, if they are a member, but are not on shift in an organization that has a by shift policy, then $a$
-does not have possible access $p$ as well.
-\item \textbf{\textit{notauthenticated}}: This is the opposite of the ``authenticated'' rule. A person $a$ is authenticated to access $p$'s information, but $a$
-does not treat $p$, then $a$ is not authenticated to access $p$'s information. If $a$ cannot access $p$'s information in the first place according to the
-previous rule, then $a$ is automatically not authenticated to access $p$'s information.
-\item \textbf{\textit{deny}}: A person $a$ is denied access to a document $d$ in one of the following situations:
-\begin{itemize}
- \item $a$ is authenticated to access $p$'s information, $d$ belongs to $p$, $p$ has an opt out policy.
-\item $d$ belongs to $p$, but $a$ is not authenticated to access $p$'s information.
-\item $a$ has possible access to $p$, $d$ belongs to $p$, $p$ has an opt out policy with emergency override, and the situation is not an emergency.
-\item $a$ is authenticated to access $p$'s information, $d$ belongs to $p$, $p$ has an opt in policy except for sensitive information, and $d$ is classified as
-sensitive.
-\item $a$ is authenticated to access $p$'s information, $d$ belongs to $p$, $p$ has an opt in policy with specific denials, and $p$ has explicitly denied $a$
-access.
-\end{itemize}
-
-\end{itemize}
-
 \begin{table*}[!t]
 \centering
 \scalebox{0.75}{
  \begin{tabular}{m{3cm}|m{9cm}|m{5cm}}
-\textbf{Query}&\textbf{Associated Facts}&\textbf{Expected Results}\\
+\textbf{Query}&\textbf{Relevant Facts}&\textbf{Expected Results}\\
 \hline\hline
 Dr Smith $\rightarrow$ XRay1 & \begin{itemize}
                              \item Dr Smith is a member of Grand River 
@@ -447,11 +329,152 @@ Dr Smith $\rightarrow$ MRI1 & \begin{itemize}
 
 
 
+There are different forms of consent that a patient may choose from. Coiera and Clarke~\cite{coiera2004consent} define four general forms of patient consent as
+follows:
+
+\begin{itemize}
+ \item \textit{General consent}: This is also generally known as ``opt-in'' which means that the patient agrees that any health care professional may access
+all of their health data for the purpose of providing care to them.
+\item \textit{General consent with specific denial(s)}: This means that the patient specifically defines certain exceptions to their general consent policy.
+These exceptions may be related to particular data or to particular people.
+\item \textit{General denial with specific consent(s)}: In this case, the patient generally denies access to their data except in specific circumstances. These
+may include disclosure for specific purposes or to specific people or the disclosure of certain types of information.
+\item \textit{General denial}: This is the strictest level of consent a patient may have. In this case, the patient denies the use of their information for any
+future event irrelevant of the circumstances that may occur. This consent policy is also generally known as ``opt-out''.
+\end{itemize}
+
+Pruski~\cite{pruski2010} use these four forms of consent while designing their rule-based language for describing patient consent policies. Additionally,
+Pruski outlines the key requirements that must be taken into consideration while dealing with patient consent. These are expressing who can access the data,
+the kind and the sensitivity of the data, the period for which a consent policy is valid, the purpose of why the data is being accessed, and what kind of
+consent is given to the user requesting the data. 
+
+In our work, we consider both the four forms of patient consent as well as some of the requirements proposed by Pruski. In our current prototype, we support
+five types of patient consent policies as follows:
+
+\begin{itemize}
+ \item \textit{opt-in}: As described above, a patient who has an opt-in policy allows any treating doctor to access their information. In our system, we also
+add other conditions that need to be met such as that the health care professional should be a member of the admitting organization etc. These details will be
+discussed in Section~\ref{main-sys}.
+\item \textit{opt-in except for sensitive documents}: In this case, the patient allows access to all their information except for documents that are classified
+as sensitive. For example, these may include HIV tests or Sexually Transmitted Diseases. 
+\item \textit{opt-in except for certain people}: In this case, the patient allows access to all their information, but specifically denies certain individuals
+from accessing their data. We currently support exceptions to health care professionals only.
+\item \textit{opt-out}: A patient with an opt-out policy explicitly denies access to all their information regardless of who is trying to access the data or
+why they are trying to access it.
+\item \textit{opt-out with emergency override}: In this case, the patient agrees to grant access to their information only if it is an emergency situation. 
+\end{itemize}
+
+\begin{figure}[!t]
+ \centering
+ \includegraphics[scale=0.25,keepaspectratio=true]{./main.png}
+ % main.png: 1004x596 pixel, 72dpi, 35.41x21.02 cm, bb=0 0 1004 596
+ \caption{Example Scenario}
+ \label{fig:mainscreen}
+\end{figure}
+
+
+\section{Our System Name}
+\label{main-sys}
+
+Not sure of this section's title but if we have a name for our system, that would do for the title. 
+
+\subsection{Information Flow}
+\label{info-flow}
+
+Currently, our system assumes that all the information needed is already captured. That is, all information about the patient, their documents as well as their
+privacy policies. Similarly, we also assume that all the information about the different hospitals, doctors, and nurses is already present. In this sense, we
+focus on answering the question of whether a doctor or nurse can access a certain document. This is done by loading the facts available and our rule set into
+Euler, and then querying it to see if a certain doctor or nurse can access a certain document. If access is granted, then we present the user with the proof
+provided by Euler. If no proof is found, we check if we can find an explicit deny rule for the same actor and document in the original query. If so, we present
+the user with the proof of why access has been denied. Figure~\ref{fig:mainscreen} shows the setup of our tool. In this scenario, we are checking if Dr Smith
+has access to XRay1. In the ``Figure'' tab, a visual representation of all the facts related to this scenario is presented. These facts are extracted form
+the facts.n3 file described in the next section. Once the user clicks on
+``Execute'', our tool would display Euler's generated proof as shown in Figure~\ref{fig:proof}. In this case, access has been granted as shown by the note in
+the top right corner. The proof shows the evidence used to reach this conclusion. It shows the different facts that have been used to satisfy the appropriate
+rule to either grant or deny access.
+
+
+
+\subsection{Facts in N3 Notation}
+
+To test our access policies, we chose a set of facts that can reflect all the situations we wish to test. Figure~\ref{fig:allfacts} shows all the facts we use
+to test our rules. There are four different types of actors: doctors, nurses, hospitals and patients. All hospitals have a ``members only'' policy where only
+members of the hospital are authorized to access patient information. Some hospitals enforce a ``on shift'' only policy where only members that are currently on
+shift may be able to access any patient information. Doctors and nurses can be members of more than one hospital, but can only be on shift in one hospital at a
+time. A patient is treated in a hospital, and own documents that reflect their medical information. Some documents are classified as sensitive. Currently, we
+only classify documents as sensitive or non sensitive (the default). In the future, we may wish to add different types of classifications such that a patient
+may have more flexibility in specifying which category of documents do they grant access to. Additionally, a patient may be in an emergency situation. The
+default is that the patient is in a regular episode of care. As indicated in Section~\ref{cons-polic}, we currently support five different types of patient
+consent policies. These are coded as optin, optinsens, optinexcep, and optout respectively. We assigned the different policies to the patients such that all of
+our designed access policies can be exhaustively tested. 
+Appendix~\ref{sec:facts-file} shows the facts.n3 file we use to represent the facts shown in Figure~\ref{fig:allfacts}.
+
+\begin{figure}[!t]
+ \centering
+ \includegraphics[scale=0.25,keepaspectratio=true]{./proof.png}
+ % proof.png: 996x597 pixel, 72dpi, 35.13x21.06 cm, bb=0 0 996 597
+ \caption{Query Result \& Proof of the Scenario in Figure~\ref{fig:mainscreen}}
+ \label{fig:proof}
+\end{figure}
+
+\subsection{Access Policies in N3 Notation}
+\label{rules-sec}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=16cm,height=14cm]{BigPicture.png}
+\caption{Visual Representation of the facts.n3 File}
+\label{fig:allfacts}
+\end{figure*}
+
+In our current prototype, we have designed the basic set of rules that can later be expanded for more sophisticated rule nesting. The complete rule file can be
+found in Appendix~\ref{sec:rules-file}. There are six possible rule conclusions in our rule set. The two main conclusions are allowing or denying
+access. However, we need the other rules to reach these conclusions. The following is the list of these six conclusions:
+
+
+
+\begin{itemize}
+ \item \textbf{\textit{possibleaccess}}: A person $a$ has possible access to patient $p$ if they are a member of the organization $p$ is treated in.
+Additionally, if this organization has a by shift policy, then $a$ must be on shift to have possible access.
+\item \textbf{\textit{authenticated}}: A person $a$ is authenticated to access a patient $p$'s information if they have possible access to $p$, and they are
+treating $p$. The reason possible access is separated from authentication is that in emergency situations, a non treating doctor might need to access this
+patient's information. In that case, they still need to satisfy the possible access rule.
+\item \textbf{\textit{access}}: A person $a$ is granted access to a document $d$ if one of the following cases is true:
+\begin{itemize}
+ \item $a$ is authenticated to access $p$'s information, $d$ belongs to $p$, and $p$ has an opt in policy.
+\item $a$ has possible access to $p$'s information, $d$ belongs to $p$, $p$ has an opt out policy with emergency override, and $p$ is in an emergency situation.
+\item $a$ is authenticated to access $p$'s information, $d$ belongs to $p$, $p$ has an opt in policy with exceptions, and $a$ is not one of those exceptions.
+\item $a$ is authenticated to access $p$'s information, $d$ belongs to $p$, $p$ has an opt in policy except for sensitive data, and $d$ is not classified as
+sensitive.
+\end{itemize}
+\item \textbf{\textit{cannotaccess}}: This is the converse of the ``possibleaccess'' rule. A person $a$ does not have possible access $p$'s information if $p$
+is treated in $o$, but $a$ is not a member of $o$. Similarly, if they are a member, but are not on shift in an organization that has a by shift policy, then $a$
+does not have possible access to $p$'s information as well.
+\item \textbf{\textit{notauthenticated}}: This is the opposite of the ``authenticated'' rule. If a person $a$ has possible access $p$'s information, but
+$a$
+does not treat $p$, then $a$ is not authenticated to access $p$'s information. If $a$ cannot access $p$'s information in the first place according to the
+previous rule, then $a$ is automatically not authenticated to access $p$'s information.
+\item \textbf{\textit{deny}}: A person $a$ is denied access to a document $d$ in one of the following situations:
+\begin{itemize}
+ \item $a$ is authenticated to access $p$'s information, $d$ belongs to $p$, but $p$ has an opt out policy.
+\item $d$ belongs to $p$, but $a$ is not authenticated to access $p$'s information.
+\item $a$ has possible access to $p$, $d$ belongs to $p$, $p$ has an opt out policy with emergency override, and the situation is not an emergency.
+\item $a$ is authenticated to access $p$'s information, $d$ belongs to $p$, $p$ has an opt in policy except for sensitive information, and $d$ is classified as
+sensitive.
+\item $a$ is authenticated to access $p$'s information, $d$ belongs to $p$, $p$ has an opt in policy with specific denials, and $p$ has explicitly denied $a$
+access.
+\end{itemize}
+
+\end{itemize}
+
+
+
 \subsection{Tested Scenarios}
 
 Given the above facts, we designed twelve different scenarios to test our different access policies. Table~\ref{tab:scenarios} summarizes these scenarios and
-an their expected results. In this table, we use plain English to describe the query and facts instead of n3 notation for better illustration. These facts are
-based on Figure~\ref{fig:allfacts}. We write the queries in the form of ``some person $\rightarrow$ some document'' which means that this person is trying to
+their expected results. In this table, we use plain English to describe the query and facts instead of n3 notation for better illustration. These facts are
+based on the facts.n3 file shown in Appendix~\ref{sec:facts-file}, and represented in Figure~\ref{fig:allfacts}. We write the queries in the form of ``some
+person $\rightarrow$ some document'' which means that this person is trying to
 access this document, and we are trying to determine whether we should grant them access or not. As shown in Table~\ref{tab:scenarios}, we chose scenarios that
 show how the different consent policies behave in different situations. For example, Tom has an opt in policy with the exception of sensitive documents. When
 Dr Smith tries to access a non-sensitive document, CTScan2, he was granted access. However, when he tries to access a sensitive document, STD1, he was denied
@@ -462,7 +485,7 @@ access. Similarly, we tested different combination of facts for the other polici
 \label{sec:discFuture}
 
 Our current work is a simple prototype demonstrating the applicability of using ideas from the semantic web to the problem of reasoning with patient consent.
-Our prototypes shows that using a reasoning engine such as Euler successfully provides the needed results. However, there are still some limitations to our
+Our prototype shows that using a reasoning engine such as Euler successfully provides the needed results. However, there are still some limitations to our
 solution. Some of them can be easily implemented as future work, and some of them are due to the nature of N3 notation, and the way Euler works. 
 
 Currently, we can only answer queries which have one answer. For example, we cannot answer queries in the form of ``Who has access to a specific document?''
@@ -477,19 +500,25 @@ notation supports rule nesting which would support more elaborate policies. So f
 rules in N3. The next step would be to expand the rule set to include more consent policies using rule nesting.
 
 In our current prototype, we do not discover policy conflicts. This would be a very useful feature to add. First, it would allow us to discover any mistakes
-made while creating the rules. This would also be useful to detect conflicts between different levels of policies. For example, a hospital may have specific
+made while creating the rules. It would also be useful to detect conflicts between different levels of policies. For example, a hospital may have specific
 policies that allow access to patient information in a specific situation, while the province policies deny access. Detecting such conflicts and resolving them
-is important to achieve a fully functional electronic consent system. Finally, we currently only support ``access'' or ``deny'' results. In order to be more
-specific, we plan to support more granular access levels in the future. For example, read, write, modify, delete etc.
+is important to achieve a fully functional electronic consent system. We currently only support ``access'' or ``deny'' results. In order to be more
+specific, we plan to support more granular access levels in the future. For example, read, write, modify, delete etc. Finally, instead of hard coding patient
+facts in N3 notation, having the relevant facts be automatically converted into N3 from an actual hospital database system would be more practical.
+That way, already existing information can be used and integrated within an electronic patient consent management system.
 
 \section{Conclusion}
 \label{concl}
-The conclusion goes here.
 
+In this paper, we presented an electronic patient consent management system prototype. Our prototype is based on N3 notation, and the Euler reasoning engine.
+We demonstrated five different patient consent policies (opt in, opt in with exceptions to sensitive information, opt in with exceptions to certain people, opt
+out, and opt out with emergency override), and presented different scenarios to show how they affect access control in each situation. We tested twelve
+different scenarios which present different fact combinations to show how the different consent policies behave in different situations. Our prototype shows
+that using a semantic reasoning engine such as Euler works well to address the challenges of patient information access. The advantage of Euler is that it can
+semantically reason with the data, and additionally, can generate a proof showing the evidence it found to support its conclusions. Such a proof can later be
+used as a verification token to be exchanged between different systems. We hope to expand this prototype by supporting more consent policies, and more
+elaborate rule nesting in N3 to achieve better support for patient consent management.
 
-
-
-% conference papers do not normally have an appendix
 
 
 % use section* for acknowledgement
