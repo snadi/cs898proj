@@ -192,7 +192,7 @@ languages, N3 logic provides simplicity in syntax and completeness as rules can 
 \subsection{Euler}
 
 A reasoning engine is required in order to make use of the N3 rules.  There are various RDF/N3 reasoners available.
-Table~\ref{tab:n3tools} highlights some of the most popular ones. We chose to use Euler because ???????????????
+Table~\ref{tab:n3tools} highlights some of the most popular ones. Our decision to use Euler was motivated by the fact that it provides high level of integration of the core engine with high level programming languages used to build enterprise systems.  Current Euler implementation supports Java, C\#, Python, Javascript and Prolog.  We used the Euler's Java implementation for our application to integrate the reasoning engine into our demo application.  The highly reusable design of Euler made the integration process painless.  Furthermore, the Euler yap engine provides industrial level performance.  Also to deal with large amount of data, Euler can translate data (triples) into SQL.  Given the fact that Euler uses N3 notation, it makes it compatible with other reasoning engines based on N3 (such as W3C cwm).  For the purpose of our projects the main motivational factors were (a) support of N3 notation and rules (b) generation of the proof.  The Euler engine satisfied both these conditions.
 
 
 \section{Related Work}
@@ -394,7 +394,7 @@ why they are trying to access it.
 \end{figure}
 
 
-\section{Our System Name}
+\section{Consentir}
 \label{main-sys}
 
 Not sure of this section's title but if we have a name for our system, that would do for the title. 
