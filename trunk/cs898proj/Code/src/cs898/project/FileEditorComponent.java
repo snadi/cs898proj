@@ -1,8 +1,6 @@
 package cs898.project;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,7 +16,9 @@ import javax.swing.event.DocumentListener;
 
 public class FileEditorComponent extends JPanel {
 
-    private File file;
+	private static final long serialVersionUID = 6305475780523535986L;
+	
+	private File file;
     private JTextArea contents;
     private JButton saveButton;
     private JButton reloadButton;
