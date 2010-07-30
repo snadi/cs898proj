@@ -1,6 +1,5 @@
 package cs898.project;
 
-import java.awt.Color;
 import java.awt.Font;
 
 import javax.swing.JFrame;
@@ -8,7 +7,9 @@ import javax.swing.JTabbedPane;
 
 public class ApplicationFrame extends JFrame {
 
-    private JTabbedPane mainPane;
+	private static final long serialVersionUID = 333177475893142104L;
+	
+	private JTabbedPane mainPane;
 
     public ApplicationFrame() {
         super("CS898 - Demo Application");

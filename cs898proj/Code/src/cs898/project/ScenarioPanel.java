@@ -1,8 +1,10 @@
 package cs898.project;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,22 +13,21 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
 
 import cs898.project.Configuration.Doctor;
 import cs898.project.Configuration.Document;
 import cs898.project.Configuration.Scenario;
 import cs898.project.engine.EulerEngineWrapper;
-import java.awt.Color;
-import java.awt.Font;
-import javax.swing.JOptionPane;
 
 public class ScenarioPanel extends JPanel {
 
-    private JComboBox doctorsComboBox;
+	private static final long serialVersionUID = -7156187351808167676L;
+	
+	private JComboBox doctorsComboBox;
     private JComboBox documentsComboBox;
     private ActionListener listener = new MyActionListener();
     private JTabbedPane tabbedPane;

@@ -1,8 +1,8 @@
+import java.awt.Dimension;
+
 import javax.swing.JFrame;
-import javax.swing.UIManager;
 
 import cs898.project.ApplicationFrame;
-import java.awt.Dimension;
 
 
 public class demo {

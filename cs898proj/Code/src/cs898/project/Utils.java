@@ -49,7 +49,6 @@ public class Utils {
 		}
 		
 		try{
-			StringBuffer sb = new StringBuffer();
 			BufferedWriter w = new BufferedWriter(new FileWriter(f));
 			
 			w.write(content);

@@ -5,6 +5,7 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -14,12 +15,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import cs898.project.engine.EulerEngineWrapper;
-import java.awt.Color;
-import java.io.File;
 
 public class QueryRunnerPanel extends JPanel {
 
-    private JTextArea query;
+	private static final long serialVersionUID = -6112526766243667533L;
+	
+	private JTextArea query;
     private FileEditorComponent facts;
     private FileEditorComponent rules;
     private JTextArea result;

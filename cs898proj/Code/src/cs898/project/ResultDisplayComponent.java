@@ -11,6 +11,8 @@ import javax.swing.text.StyledDocument;
 
 public class ResultDisplayComponent extends JTextPane {
 
+	private static final long serialVersionUID = -3298254534428708939L;
+
 	public ResultDisplayComponent() {
 		StyledDocument doc = getStyledDocument();
         addStylesToDocument(doc);

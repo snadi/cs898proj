@@ -1,13 +1,14 @@
 package cs898.project;
 
 import java.awt.GridLayout;
-import java.io.File;
 
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
 public class AdminPanel extends JPanel {
 
+	private static final long serialVersionUID = 3932974320457310549L;
+	
 	private JTabbedPane pane;
 	
 	public AdminPanel() {
@@ -17,9 +18,6 @@ public class AdminPanel extends JPanel {
 	
 	private void buildGui() {
 		pane = new JTabbedPane(JTabbedPane.RIGHT);
-		
-		//pane.addTab("Rules", new FileEditorComponent(new File(Configuration.getRulesFileLocation())));
-		//pane.addTab("Facts", new FileEditorComponent(new File(Configuration.getFactsFileLocation())));
 		add(pane);
 	}
 	
